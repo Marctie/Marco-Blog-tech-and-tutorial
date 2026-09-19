@@ -1,8 +1,10 @@
 name: Pubblica il sito
 
+# Per ora si avvia solo a mano (Actions › Pubblica il sito › Run workflow).
+# Per pubblicare a ogni push, aggiungi sotto "on:":
+#   push:
+#     branches: [main]
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
