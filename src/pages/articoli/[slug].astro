@@ -1,0 +1,538 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import TesterBanner from '../../components/TesterBanner.astro';
+import { CATEGORIE, TIPI, DISPOSITIVI, SITE } from '../../site.config';
+import { getArticoli, url, copertina, dataLunga, minutiLettura, correlati, type Articolo } from '../../lib/utils';
+
+export async function getStaticPaths() {
+  const tutti = await getArticoli();
+  return tutti.map((a) => ({ params: { slug: a.id }, props: { articolo: a, tutti } }));
+}
+
+interface Props {
+  articolo: Articolo;
+  tutti: Articolo[];
+}
+
+const { articolo: a, tutti } = Astro.props;
+const { Content, headings } = await render(a);
+const d = a.data;
+const cat = CATEGORIE[d.categoria];
+const tipo = TIPI[d.tipo];
+const indice = headings.filter((h) => h.depth === 2);
+const simili = correlati(tutti, a, 3);
+const lettura = minutiLettura(a.body);
+const pagina = new URL(Astro.url.pathname, Astro.site).toString();
+
+const sezione =
+  d.tipo === 'problema'
+    ? { nome: 'Ho un problema', href: url('/ho-un-problema/') }
+    : d.tipo === 'tutorial'
+      ? { nome: 'Tutorial', href: url('/tutorial/') }
+      : d.tipo === 'notizia'
+        ? { nome: 'Notizie', href: url('/notizie/') }
+        : { nome: cat.nome, href: url(`/articoli/categoria/${d.categoria}/`) };
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': d.tipo === 'notizia' ? 'NewsArticle' : 'Article',
+    headline: d.title,
+    description: d.description,
+    image: [new URL(url(`/og/${a.id}.jpg`), Astro.site).toString()],
+    datePublished: d.date.toISOString(),
+    dateModified: (d.updated ?? d.date).toISOString(),
+    author: { '@type': 'Organization', name: SITE.author },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE.name,
+      logo: { '@type': 'ImageObject', url: new URL(url('/icon-512.png'), Astro.site).toString() },
+    },
+    mainEntityOfPage: pagina,
+    inLanguage: 'it-IT',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: new URL(url('/'), Astro.site).toString() },
+      { '@type': 'ListItem', position: 2, name: sezione.nome, item: new URL(sezione.href, Astro.site).toString() },
+      { '@type': 'ListItem', position: 3, name: d.title, item: pagina },
+    ],
+  },
+];
+
+const testoShare = encodeURIComponent(`${d.title} ${pagina}`);
+---
+<Base
+  title={d.title}
+  description={d.description}
+  image={url(`/og/${a.id}.jpg`)}
+  type="article"
+  published={d.date}
+  modified={d.updated}
+  jsonLd={jsonLd}
+>
+  <article class="articolo" style={`--cat:${cat.colore}`}>
+    <header class="wrap art-head">
+      <nav class="briciole" aria-label="Percorso">
+        <a href={url('/')}>Home</a>
+        <span>/</span>
+        <a href={sezione.href}>{sezione.nome}</a>
+      </nav>
+      <div class="art-badges">
+        <a class="badge" href={url(`/articoli/categoria/${d.categoria}/`)}>{cat.nome}</a>
+        {d.tipo !== 'notizia' && <span class="tipo-pill">{tipo.nome}</span>}
+      </div>
+      <h1>{d.title}</h1>
+      <p class="art-desc">{d.description}</p>
+      <div class="meta art-meta">
+        <span><Icon name="user" size={15} /> {SITE.author}</span>
+        <span><Icon name="calendar" size={15} /> <time datetime={d.date.toISOString()}>{dataLunga(d.date)}</time></span>
+        {d.updated && <span>Aggiornato il {dataLunga(d.updated)}</span>}
+        <span><Icon name="clock" size={15} /> {lettura} min di lettura</span>
+      </div>
+      {
+        (d.difficolta || d.tempo || d.dispositivo) && (
+          <div class="scheda">
+            {d.dispositivo && (
+              <div>
+                <span>Dispositivo</span>
+                <strong>{DISPOSITIVI[d.dispositivo]}</strong>
+              </div>
+            )}
+            {d.difficolta && (
+              <div>
+                <span>Difficoltà</span>
+                <strong class={`diff diff-${d.difficolta}`}>{d.difficolta}</strong>
+              </div>
+            )}
+            {d.tempo && (
+              <div>
+                <span>Tempo richiesto</span>
+                <strong>{d.tempo}</strong>
+              </div>
+            )}
+          </div>
+        )
+      }
+    </header>
+
+    <div class="wrap">
+      <figure class="art-cover">
+        <img src={copertina(a)} alt="" width="1200" height="675" />
+      </figure>
+    </div>
+
+    <div class="wrap art-layout">
+      <aside class="art-side">
+        {
+          indice.length > 2 && (
+            <nav class="toc" aria-label="Indice">
+              <h2>In questo articolo</h2>
+              <ol>
+                {indice.map((h) => (
+                  <li>
+                    <a href={`#${h.slug}`}>{h.text}</a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )
+        }
+        <div class="share">
+          <h2>Condividi</h2>
+          <div class="share-row">
+            <a href={`https://wa.me/?text=${testoShare}`} target="_blank" rel="noopener" class="chip">WhatsApp</a>
+            <a href={`https://t.me/share/url?url=${encodeURIComponent(pagina)}&text=${encodeURIComponent(d.title)}`} target="_blank" rel="noopener" class="chip">Telegram</a>
+            <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pagina)}`} target="_blank" rel="noopener" class="chip">Facebook</a>
+            <a href={`https://x.com/intent/post?text=${testoShare}`} target="_blank" rel="noopener" class="chip">X</a>
+            <button type="button" class="chip copia-link" data-url={pagina}>Copia link</button>
+          </div>
+        </div>
+      </aside>
+
+      <div class="art-main">
+        <div class="prose">
+          <Content />
+        </div>
+
+        {
+          d.video.length > 0 && (
+            <section class="box-video">
+              <h2>
+                <Icon name="youtube" size={22} /> Da guardare su YouTube
+              </h2>
+              <p class="muted">Preferisci vederlo spiegato a voce? Questi canali italiani ne parlano spesso.</p>
+              <ul>
+                {d.video.map((v) => (
+                  <li>
+                    <a href={v.url} target="_blank" rel="noopener">
+                      <span class="yt-play">
+                        <Icon name="youtube" size={20} />
+                      </span>
+                      <span>
+                        <strong>{v.titolo}</strong>
+                        {v.canale && <small>{v.canale}</small>}
+                      </span>
+                      <Icon name="external" size={16} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        {
+          d.fonti.length > 0 && (
+            <section class="fonti">
+              <h2>Fonti e approfondimenti</h2>
+              <ul>
+                {d.fonti.map((f) => (
+                  <li>
+                    <a href={f.url} target="_blank" rel="noopener">
+                      {f.titolo}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        {
+          d.tags.length > 0 && (
+            <div class="tags">
+              {d.tags.map((t) => (
+                <a class="chip" href={url(`/cerca/?q=${encodeURIComponent(t)}`)}>
+                  #{t}
+                </a>
+              ))}
+            </div>
+          )
+        }
+
+        {
+          d.tipo === 'problema' && (
+            <div class="non-risolto">
+              <strong>Non hai risolto?</strong>
+              <p>Dai un'occhiata agli altri problemi della stessa categoria, spesso la causa è collegata.</p>
+              <a class="btn btn-ghost" href={url(`/ho-un-problema/?d=${d.dispositivo ?? ''}`)}>
+                Altri problemi {d.dispositivo ? DISPOSITIVI[d.dispositivo] : ''} <Icon name="arrow" size={16} />
+              </a>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </article>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Continua a leggere</span>
+          <h2 class="section-title">Potrebbe interessarti anche</h2>
+        </div>
+      </div>
+      <div class="grid grid-3">
+        {simili.map((s) => <ArticleCard articolo={s} />)}
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <TesterBanner />
+  </div>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.copia-link').forEach((b) => {
+    b.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(b.dataset.url ?? location.href);
+        b.textContent = 'Link copiato';
+      } catch {
+        b.textContent = 'Copia non riuscita';
+      }
+      setTimeout(() => (b.textContent = 'Copia link'), 2000);
+    });
+  });
+</script>
+
+<style>
+  .art-head {
+    max-width: 880px;
+    padding-top: 40px;
+    padding-bottom: 28px;
+  }
+
+  .briciole {
+    display: flex;
+    gap: 8px;
+    font-size: 0.88rem;
+    color: var(--text-faint);
+    margin-bottom: 22px;
+  }
+
+  .briciole a:hover {
+    color: var(--text);
+  }
+
+  .art-badges {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .tipo-pill {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    font-size: clamp(1.9rem, 4.6vw, 3rem);
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .art-desc {
+    font-size: 1.18rem;
+    color: var(--text-dim);
+    margin: 0 0 20px;
+  }
+
+  .art-meta {
+    font-size: 0.88rem;
+  }
+
+  .scheda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 22px;
+  }
+
+  .scheda div {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 16px;
+    display: grid;
+  }
+
+  .scheda span {
+    font-size: 0.75rem;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .scheda .diff {
+    text-transform: capitalize;
+  }
+
+  .diff-facile {
+    color: #2fbf71;
+  }
+
+  .diff-media {
+    color: #f5a524;
+  }
+
+  .diff-avanzata {
+    color: #ef4d5a;
+  }
+
+  .art-cover {
+    margin: 0 auto;
+    max-width: 1100px;
+  }
+
+  .art-cover img {
+    width: 100%;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  .art-layout {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 760px);
+    gap: 56px;
+    justify-content: center;
+    margin-top: 44px;
+  }
+
+  .art-side {
+    position: sticky;
+    top: 92px;
+    align-self: start;
+    display: grid;
+    gap: 28px;
+  }
+
+  .toc h2,
+  .share h2 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-faint);
+    margin-bottom: 12px;
+  }
+
+  .toc ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 2px;
+    border-left: 2px solid var(--border);
+  }
+
+  .toc a {
+    display: block;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    margin-left: -2px;
+    border-left: 2px solid transparent;
+  }
+
+  .toc a:hover {
+    color: var(--text);
+    border-left-color: var(--cat);
+  }
+
+  .share-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .box-video,
+  .fonti,
+  .non-risolto {
+    margin-top: 40px;
+    padding: 24px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .box-video h2,
+  .fonti h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+  }
+
+  .box-video h2 :global(svg) {
+    color: #ff3d3d;
+  }
+
+  .box-video ul,
+  .fonti ul {
+    list-style: none;
+    padding: 0;
+    margin: 14px 0 0;
+    display: grid;
+    gap: 8px;
+  }
+
+  .box-video a {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  .box-video a:hover {
+    border-color: #ff3d3d;
+  }
+
+  .box-video strong {
+    display: block;
+    color: var(--text);
+    font-size: 0.97rem;
+  }
+
+  .box-video small {
+    color: var(--text-faint);
+  }
+
+  .yt-play {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #ff3d3d;
+    color: #fff;
+  }
+
+  .fonti {
+    font-size: 0.93rem;
+  }
+
+  .fonti a {
+    color: var(--text-dim);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .fonti a:hover {
+    color: var(--accent-2);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 32px;
+  }
+
+  .non-risolto {
+    border-color: color-mix(in srgb, var(--cat) 50%, transparent);
+  }
+
+  .non-risolto p {
+    color: var(--text-dim);
+    margin: 6px 0 16px;
+  }
+
+  @media (max-width: 1000px) {
+    .art-layout {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      margin-top: 32px;
+    }
+
+    .art-side {
+      position: static;
+      order: 2;
+      margin-top: 36px;
+    }
+
+    .toc {
+      display: none;
+    }
+  }
+</style>

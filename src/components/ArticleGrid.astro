@@ -1,0 +1,127 @@
+---
+// Griglia di articoli con filtri a chip e ricerca testuale lato client.
+import ArticleCard from './ArticleCard.astro';
+import Icon from './Icon.astro';
+import type { Articolo } from '../lib/utils';
+
+interface Props {
+  articoli: Articolo[];
+  filtro?: 'tipo' | 'categoria' | 'dispositivo';
+  opzioni?: Record<string, string>;
+  ricerca?: boolean;
+  placeholder?: string;
+  parametro?: string;
+}
+
+const { articoli, filtro, opzioni = {}, ricerca = false, placeholder = 'Cerca...', parametro = 'f' } = Astro.props;
+
+const valore = (a: Articolo) =>
+  filtro === 'tipo' ? a.data.tipo : filtro === 'categoria' ? a.data.categoria : (a.data.dispositivo ?? '');
+
+// mostra solo le opzioni che hanno almeno un articolo
+const presenti = Object.entries(opzioni).filter(([id]) => articoli.some((a) => valore(a) === id));
+---
+<div class="agrid" data-parametro={parametro}>
+  {
+    ricerca && (
+      <label class="search-field agrid-search">
+        <Icon name="search" />
+        <span class="sr-only">{placeholder}</span>
+        <input type="search" placeholder={placeholder} autocomplete="off" />
+      </label>
+    )
+  }
+  {
+    filtro && presenti.length > 1 && (
+      <div class="filters" role="group" aria-label="Filtra">
+        <button type="button" class="chip active" data-val="">
+          Tutti
+        </button>
+        {presenti.map(([id, nome]) => (
+          <button type="button" class="chip" data-val={id}>
+            {nome}
+          </button>
+        ))}
+      </div>
+    )
+  }
+  <div class="grid grid-3">
+    {
+      articoli.map((a) => (
+        <div
+          class="agrid-item"
+          data-val={filtro ? valore(a) : ''}
+          data-testo={`${a.data.title} ${a.data.description} ${a.data.tags.join(' ')}`.toLowerCase()}
+        >
+          <ArticleCard articolo={a} />
+        </div>
+      ))
+    }
+  </div>
+  <p class="empty agrid-vuoto" hidden>Nessun risultato. Prova con parole diverse o togli il filtro.</p>
+</div>
+
+<style>
+  .agrid-search {
+    margin-bottom: 18px;
+    max-width: 640px;
+  }
+
+  .agrid-item {
+    display: flex;
+  }
+
+  .agrid-item > :global(.card) {
+    width: 100%;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.agrid').forEach((root) => {
+    const param = root.dataset.parametro ?? 'f';
+    const items = [...root.querySelectorAll<HTMLElement>('.agrid-item')];
+    const chips = [...root.querySelectorAll<HTMLButtonElement>('.filters .chip')];
+    const input = root.querySelector<HTMLInputElement>('.agrid-search input');
+    const vuoto = root.querySelector<HTMLElement>('.agrid-vuoto');
+    let filtro = '';
+
+    const aggiorna = () => {
+      const q = (input?.value ?? '').trim().toLowerCase();
+      const parole = q.split(/\s+/).filter(Boolean);
+      let visibili = 0;
+      for (const it of items) {
+        const okFiltro = !filtro || it.dataset.val === filtro;
+        const testo = it.dataset.testo ?? '';
+        const okTesto = parole.every((p) => testo.includes(p));
+        const ok = okFiltro && okTesto;
+        it.hidden = !ok;
+        if (ok) visibili++;
+      }
+      if (vuoto) vuoto.hidden = visibili > 0;
+    };
+
+    const scegli = (val: string, aggiornaUrl = true) => {
+      filtro = val;
+      chips.forEach((c) => c.classList.toggle('active', (c.dataset.val ?? '') === val));
+      aggiorna();
+      if (aggiornaUrl) {
+        const u = new URL(location.href);
+        if (val) u.searchParams.set(param, val);
+        else u.searchParams.delete(param);
+        history.replaceState(null, '', u);
+      }
+    };
+
+    chips.forEach((c) => c.addEventListener('click', () => scegli(c.dataset.val ?? '')));
+    input?.addEventListener('input', aggiorna);
+
+    const params = new URLSearchParams(location.search);
+    const iniziale = params.get(param);
+    if (iniziale && chips.some((c) => c.dataset.val === iniziale)) scegli(iniziale, false);
+    const q = params.get('q');
+    if (q && input) {
+      input.value = q;
+      aggiorna();
+    }
+  });
+</script>

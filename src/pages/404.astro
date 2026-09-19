@@ -1,0 +1,47 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { url } from '../lib/utils';
+---
+<Base title="Pagina non trovata" noindex>
+  <div class="wrap nf">
+    <img src={url('/logo.svg')} alt="" width="96" height="96" />
+    <span class="eyebrow">Errore 404</span>
+    <h1>Qui non c'è niente. Proviamo con un riavvio?</h1>
+    <p>La pagina che cercavi non esiste o è stata spostata. Nessun problema, capita anche ai migliori.</p>
+    <div class="azioni">
+      <a class="btn btn-primary" href={url('/')}><Icon name="reset" size={18} /> Torna alla home</a>
+      <a class="btn btn-ghost" href={url('/cerca/')}><Icon name="search" size={18} /> Cerca nel sito</a>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .nf {
+    max-width: 680px;
+    text-align: center;
+    padding-top: 80px;
+    padding-bottom: 40px;
+  }
+
+  .nf img {
+    margin: 0 auto 24px;
+  }
+
+  h1 {
+    font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+    margin-bottom: 14px;
+  }
+
+  p {
+    color: var(--text-dim);
+  }
+
+  .azioni {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+  }
+</style>

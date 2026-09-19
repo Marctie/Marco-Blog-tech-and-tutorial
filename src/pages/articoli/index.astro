@@ -1,0 +1,60 @@
+---
+import Base from '../../layouts/Base.astro';
+import ArticleGrid from '../../components/ArticleGrid.astro';
+import { CATEGORIE, TIPI } from '../../site.config';
+import { getArticoli, url } from '../../lib/utils';
+
+const tutti = await getArticoli();
+const opzioni = Object.fromEntries(Object.entries(TIPI).map(([id, t]) => [id, t.plurale]));
+const conteggio = (id: string) => tutti.filter((a) => a.data.categoria === id).length;
+---
+<Base title="Tutti gli articoli" description="Notizie, approfondimenti, guide all'acquisto, tutorial e soluzioni ai problemi: tutto l'archivio di TastoReset diviso per categoria.">
+  <div class="wrap">
+    <header class="page-hero">
+      <span class="eyebrow">Archivio</span>
+      <h1>Tutti gli articoli</h1>
+      <p>Scegli una categoria oppure filtra per tipo di contenuto.</p>
+    </header>
+
+    <div class="cat-tiles">
+      {
+        Object.entries(CATEGORIE).map(([id, c]) => (
+          <a href={url(`/articoli/categoria/${id}/`)} class="cat-tile" style={`--cat:${c.colore}`}>
+            <strong>{c.nome}</strong>
+            <span>{conteggio(id)} articoli</span>
+          </a>
+        ))
+      }
+    </div>
+
+    <ArticleGrid articoli={tutti} filtro="tipo" opzioni={opzioni} ricerca placeholder="Cerca tra gli articoli..." parametro="tipo" />
+  </div>
+</Base>
+
+<style>
+  .cat-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .cat-tile {
+    display: grid;
+    gap: 4px;
+    padding: 18px 20px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--cat) 22%, var(--surface)), var(--surface));
+    border: 1px solid color-mix(in srgb, var(--cat) 30%, var(--border));
+    transition: transform 0.2s;
+  }
+
+  .cat-tile:hover {
+    transform: translateY(-3px);
+  }
+
+  .cat-tile span {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+</style>

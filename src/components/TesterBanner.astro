@@ -1,0 +1,65 @@
+---
+import Icon from './Icon.astro';
+import { url } from '../lib/utils';
+---
+<aside class="tester-banner">
+  <div class="tb-icon"><Icon name="flask" size={30} /></div>
+  <div class="tb-text">
+    <span class="eyebrow">Cerchiamo tester Android</span>
+    <h2>Prova in anteprima le nostre app, gratis</h2>
+    <p>Ci serve una mano per portare le nostre app sul Play Store. Installi la versione di prova, la usi un po' per 14 giorni e ci dici cosa ne pensi. Niente costi, niente abbonamenti.</p>
+  </div>
+  <a href={url('/diventa-tester/')} class="btn btn-primary">Voglio partecipare <Icon name="arrow" size={18} /></a>
+</aside>
+
+<style>
+  .tester-banner {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 28px;
+    padding: 32px 36px;
+    border-radius: 24px;
+    background:
+      radial-gradient(circle at 0% 0%, rgba(124, 92, 255, 0.35), transparent 55%),
+      radial-gradient(circle at 100% 100%, rgba(24, 214, 196, 0.28), transparent 55%),
+      var(--surface);
+    border: 1px solid var(--border-strong);
+    overflow: hidden;
+    margin: 20px 0;
+  }
+
+  .tb-icon {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    background: var(--gradient);
+    color: #fff;
+  }
+
+  h2 {
+    font-size: 1.45rem;
+    margin-bottom: 6px;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-dim);
+    max-width: 620px;
+  }
+
+  .eyebrow {
+    margin-bottom: 4px;
+  }
+
+  @media (max-width: 800px) {
+    .tester-banner {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 26px 22px;
+    }
+  }
+</style>

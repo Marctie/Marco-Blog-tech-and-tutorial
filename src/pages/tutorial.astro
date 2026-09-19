@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import ArticleGrid from '../components/ArticleGrid.astro';
+import { CATEGORIE } from '../site.config';
+import { getArticoli } from '../lib/utils';
+
+const tutorial = (await getArticoli()).filter((a) => a.data.tipo === 'tutorial');
+const opzioni = Object.fromEntries(Object.entries(CATEGORIE).map(([id, c]) => [id, c.nome]));
+---
+<Base title="Tutorial" description="Guide passo passo per smartphone, PC, console e app. Spiegate semplici, con i percorsi esatti da seguire.">
+  <div class="wrap">
+    <header class="page-hero">
+      <span class="eyebrow">Passo passo</span>
+      <h1>Tutorial</h1>
+      <p>Guide pratiche con i passaggi esatti da seguire. Per ogni guida trovi difficoltà e tempo stimato, così sai subito se è roba da cinque minuti o da pomeriggio libero.</p>
+    </header>
+    <ArticleGrid articoli={tutorial} filtro="categoria" opzioni={opzioni} ricerca placeholder="Cosa vuoi imparare a fare?" parametro="c" />
+  </div>
+</Base>

@@ -1,0 +1,429 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import TesterBanner from '../../components/TesterBanner.astro';
+import { PROGETTI, type Progetto } from '../../data/progetti';
+import { url } from '../../lib/utils';
+
+export function getStaticPaths() {
+  return PROGETTI.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+
+const { p } = Astro.props as { p: Progetto };
+const img = (f: string) => url(`/img/progetti/${p.slug}/${f}`);
+const altri = PROGETTI.filter((x) => x.slug !== p.slug);
+---
+<Base title={`${p.nome}: ${p.slogan}`} description={p.sintesi} image={p.copertina ? img(p.copertina) : undefined}>
+  <div class="progetto" style={`--pc:${p.colore}`}>
+    <section class="p-hero">
+      <div class="wrap p-hero-grid">
+        <div>
+          <a href={url('/progetti/')} class="indietro">← Tutti i progetti</a>
+          <div class="p-id">
+            <img src={img('icona.png')} alt={`Logo ${p.nome}`} width="84" height="84" />
+            <div>
+              <h1>{p.nome}</h1>
+              <p class="slogan">{p.slogan}</p>
+            </div>
+          </div>
+          <p class="sintesi">{p.sintesi}</p>
+          <div class="p-tags">
+            <span class="stato">{p.stato}</span>
+            <span class="chip">{p.piattaforma}</span>
+            <span class="chip">{p.categoria}</span>
+          </div>
+          {
+            p.cercaTester && (
+              <a href={`${url('/diventa-tester/')}?app=${p.slug}`} class="btn btn-primary">
+                Diventa tester di {p.nome} <Icon name="arrow" size={18} />
+              </a>
+            )
+          }
+        </div>
+        {p.copertina && <img class="p-cover" src={img(p.copertina)} alt={`${p.nome}, immagine di presentazione`} width="1024" height="500" />}
+      </div>
+    </section>
+
+    <section class="wrap section p-intro">
+      <div class="p-testo">
+        <span class="eyebrow">Di cosa si tratta</span>
+        {p.descrizione.map((d) => <p>{d}</p>)}
+      </div>
+      <aside class="p-privacy">
+        <Icon name="lock" size={26} />
+        <h2>Privacy prima di tutto</h2>
+        <p>{p.privacy}</p>
+        <h3>Com'è fatta</h3>
+        <div class="p-tech">{p.tecnologia.map((t) => <span class="chip">{t}</span>)}</div>
+      </aside>
+    </section>
+
+    <section class="wrap section">
+      <span class="eyebrow">Funzionalità</span>
+      <h2 class="section-title">Cosa sa fare</h2>
+      <div class="funzioni">
+        {
+          p.funzioni.map((f) => (
+            <div class="funzione">
+              <Icon name="check" size={20} />
+              <h3>{f.titolo}</h3>
+              <p>{f.testo}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="wrap section">
+      <span class="eyebrow">Galleria</span>
+      <h2 class="section-title">Uno sguardo all'app</h2>
+      <div class="galleria">
+        {
+          p.screenshot.map((s) => (
+            <figure>
+              <button type="button" class="apri" data-src={img(s.file)} data-cap={s.didascalia} aria-label={`Ingrandisci: ${s.didascalia}`}>
+                <img src={img(s.file)} alt={s.didascalia} loading="lazy" width="540" height="1170" />
+              </button>
+              <figcaption>{s.didascalia}</figcaption>
+            </figure>
+          ))
+        }
+      </div>
+      <p class="nota muted">Le immagini mostrano dati di esempio. L'app è ancora in fase di test e potrebbe cambiare prima dell'uscita.</p>
+    </section>
+
+    <div class="wrap">
+      {p.cercaTester && <TesterBanner />}
+
+      <section class="section">
+        <span class="eyebrow">Altri progetti</span>
+        <div class="altri">
+          {
+            altri.map((x) => (
+              <a href={url(`/progetti/${x.slug}/`)} class="altro">
+                <img src={url(`/img/progetti/${x.slug}/icona.png`)} alt="" width="48" height="48" />
+                <span>
+                  <strong>{x.nome}</strong>
+                  <small>{x.slogan}</small>
+                </span>
+              </a>
+            ))
+          }
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <dialog class="lightbox" id="lightbox">
+    <button type="button" class="icon-btn chiudi" aria-label="Chiudi"><Icon name="close" /></button>
+    <img src="" alt="" />
+    <p></p>
+  </dialog>
+</Base>
+
+<script>
+  const dlg = document.getElementById('lightbox') as HTMLDialogElement | null;
+  if (dlg) {
+    const img = dlg.querySelector('img')!;
+    const cap = dlg.querySelector('p')!;
+    document.querySelectorAll<HTMLButtonElement>('.apri').forEach((b) =>
+      b.addEventListener('click', () => {
+        img.src = b.dataset.src ?? '';
+        img.alt = b.dataset.cap ?? '';
+        cap.textContent = b.dataset.cap ?? '';
+        dlg.showModal();
+      }),
+    );
+    dlg.addEventListener('click', (e) => {
+      if (e.target === dlg || (e.target as HTMLElement).closest('.chiudi')) dlg.close();
+    });
+  }
+</script>
+
+<style>
+  .p-hero {
+    padding: 48px 0 24px;
+    background: radial-gradient(circle at 80% 10%, color-mix(in srgb, var(--pc) 35%, transparent), transparent 55%);
+  }
+
+  .p-hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .indietro {
+    display: inline-block;
+    color: var(--text-faint);
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+  }
+
+  .indietro:hover {
+    color: var(--text);
+  }
+
+  .p-id {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+
+  .p-id img {
+    width: 84px;
+    height: 84px;
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+
+  .slogan {
+    margin: 4px 0 0;
+    color: var(--text-dim);
+    font-size: 1.1rem;
+  }
+
+  .sintesi {
+    font-size: 1.12rem;
+    color: var(--text-dim);
+    margin: 0 0 18px;
+  }
+
+  .p-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .p-tags .chip {
+    cursor: default;
+  }
+
+  .stato {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--pc) 25%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--pc) 50%, transparent);
+  }
+
+  .p-cover {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+
+  .p-intro {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .p-testo p {
+    font-size: 1.08rem;
+    line-height: 1.8;
+    margin: 0 0 1em;
+  }
+
+  .p-privacy {
+    padding: 26px;
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .p-privacy > :global(svg) {
+    color: var(--accent-2);
+    margin-bottom: 10px;
+  }
+
+  .p-privacy h2 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+  }
+
+  .p-privacy h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-faint);
+    margin: 20px 0 10px;
+  }
+
+  .p-privacy p {
+    margin: 0;
+    color: var(--text-dim);
+  }
+
+  .p-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .p-tech .chip {
+    cursor: default;
+  }
+
+  .funzioni {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .funzione {
+    padding: 22px;
+    border-radius: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .funzione :global(svg) {
+    color: #fff;
+    background: var(--pc);
+    border-radius: 10px;
+    padding: 6px;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 12px;
+  }
+
+  .funzione h3 {
+    font-size: 1.08rem;
+    margin-bottom: 6px;
+  }
+
+  .funzione p {
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+  }
+
+  .galleria {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 24px 4px 16px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .galleria figure {
+    margin: 0;
+    flex: 0 0 230px;
+    scroll-snap-align: start;
+  }
+
+  .apri {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    border-radius: 30px;
+    background: #111;
+    border: 1px solid var(--border-strong);
+    cursor: zoom-in;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+  }
+
+  .apri:hover {
+    transform: translateY(-4px);
+  }
+
+  .apri img {
+    border-radius: 22px;
+    width: 100%;
+    height: auto;
+  }
+
+  figcaption {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-top: 12px;
+    text-align: center;
+  }
+
+  .nota {
+    font-size: 0.85rem;
+  }
+
+  .altri {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .altro {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    border-radius: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .altro:hover {
+    border-color: var(--accent);
+  }
+
+  .altro img {
+    border-radius: 12px;
+  }
+
+  .altro small {
+    display: block;
+    color: var(--text-faint);
+  }
+
+  .lightbox {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    max-width: 94vw;
+    max-height: 94vh;
+    overflow: visible;
+  }
+
+  .lightbox::backdrop {
+    background: rgba(0, 0, 0, 0.82);
+  }
+
+  .lightbox img {
+    max-height: 84vh;
+    width: auto;
+    border-radius: 20px;
+    margin: 0 auto;
+  }
+
+  .lightbox p {
+    color: #fff;
+    text-align: center;
+    margin: 12px 0 0;
+  }
+
+  .chiudi {
+    position: absolute;
+    top: -48px;
+    right: 0;
+    color: #fff;
+  }
+
+  @media (max-width: 900px) {
+    .p-hero-grid,
+    .p-intro {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+  }
+</style>

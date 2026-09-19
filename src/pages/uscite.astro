@@ -1,0 +1,276 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { USCITE } from '../data/uscite';
+import { url } from '../lib/utils';
+
+const ordinate = [...USCITE].sort((a, b) => a.data.localeCompare(b.data));
+const mesi = new Map<string, typeof ordinate>();
+for (const u of ordinate) {
+  const k = u.data.slice(0, 7);
+  mesi.set(k, [...(mesi.get(k) ?? []), u]);
+}
+const nomeMese = (k: string) =>
+  new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric' }).format(new Date(`${k}-01T12:00:00`));
+const giorno = (d: string) => (d.length === 10 ? String(Number(d.slice(8, 10))) : '—');
+const settimana = (d: string) =>
+  d.length === 10 ? new Intl.DateTimeFormat('it-IT', { weekday: 'short' }).format(new Date(`${d}T12:00:00`)) : 'tbd';
+const etichette = { gioco: 'Videogioco', hardware: 'Dispositivo', software: 'Aggiornamento' };
+---
+<Base title="Calendario uscite" description="Le date d'uscita di videogiochi, console, smartphone e aggiornamenti in arrivo nei prossimi mesi. Sempre aggiornato.">
+  <div class="wrap">
+    <header class="page-hero">
+      <span class="eyebrow">Segnati le date</span>
+      <h1>Calendario uscite</h1>
+      <p>Videogiochi, nuovi dispositivi e aggiornamenti in arrivo. Lo teniamo aggiornato man mano che arrivano le conferme ufficiali.</p>
+    </header>
+
+    <div class="filters" role="group" aria-label="Filtra per tipo">
+      <button type="button" class="chip active" data-tipo="">Tutto</button>
+      <button type="button" class="chip" data-tipo="gioco">Videogiochi</button>
+      <button type="button" class="chip" data-tipo="hardware">Dispositivi</button>
+      <button type="button" class="chip" data-tipo="software">Aggiornamenti</button>
+      <label class="chip mostra-passate"><input type="checkbox" id="passate" /> Mostra già usciti</label>
+    </div>
+
+    <div class="calendario">
+      {
+        [...mesi].map(([k, voci]) => (
+          <section class="mese" data-mese={k}>
+            <h2>{nomeMese(k)}</h2>
+            <ol>
+              {voci.map((u) => (
+                <li class={`uscita tipo-${u.tipo}`} data-tipo={u.tipo} data-data={u.data}>
+                  <div class="giorno">
+                    <strong>{giorno(u.data)}</strong>
+                    <span>{settimana(u.data)}</span>
+                  </div>
+                  <div class="info">
+                    <span class="u-tipo">{etichette[u.tipo]}</span>
+                    <h3>
+                      {u.articolo ? <a href={url(`/articoli/${u.articolo}/`)}>{u.titolo}</a> : u.titolo}
+                    </h3>
+                    {u.nota && <p>{u.nota}</p>}
+                    <div class="piattaforme">
+                      {u.piattaforme.map((p) => (
+                        <span>{p}</span>
+                      ))}
+                    </div>
+                  </div>
+                  {u.articolo && (
+                    <a class="leggi" href={url(`/articoli/${u.articolo}/`)} aria-label={`Leggi: ${u.titolo}`}>
+                      <Icon name="arrow" size={18} />
+                    </a>
+                  )}
+                  <span class="uscito">Già disponibile</span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))
+      }
+    </div>
+    <p class="muted avviso">Le date sono quelle annunciate ufficialmente dai produttori e possono cambiare. Prima di prenotare controlla sempre sul sito ufficiale o sullo store.</p>
+  </div>
+</Base>
+
+<script>
+  const oggi = new Date().toISOString().slice(0, 10);
+  const voci = [...document.querySelectorAll<HTMLElement>('.uscita')];
+  voci.forEach((v) => {
+    const d = v.dataset.data ?? '';
+    const passata = d.length === 10 ? d < oggi : d < oggi.slice(0, 7);
+    v.classList.toggle('passata', passata);
+  });
+  let tipo = '';
+  const check = document.getElementById('passate') as HTMLInputElement;
+  const aggiorna = () => {
+    voci.forEach((v) => {
+      v.hidden = (!!tipo && v.dataset.tipo !== tipo) || (v.classList.contains('passata') && !check.checked);
+    });
+    document.querySelectorAll<HTMLElement>('.mese').forEach((m) => {
+      m.hidden = !m.querySelector('.uscita:not([hidden])');
+    });
+  };
+  document.querySelectorAll<HTMLButtonElement>('.chip[data-tipo]').forEach((b) =>
+    b.addEventListener('click', () => {
+      tipo = b.dataset.tipo ?? '';
+      document.querySelectorAll('.chip[data-tipo]').forEach((c) => c.classList.toggle('active', c === b));
+      aggiorna();
+    }),
+  );
+  check.addEventListener('change', aggiorna);
+  aggiorna();
+</script>
+
+<style>
+  .mostra-passate {
+    margin-left: auto;
+  }
+
+  .mostra-passate input {
+    accent-color: var(--accent);
+  }
+
+  .mese {
+    margin-bottom: 36px;
+  }
+
+  .mese h2 {
+    font-size: 1.1rem;
+    text-transform: capitalize;
+    color: var(--text-dim);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 14px;
+  }
+
+  .mese ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 10px;
+  }
+
+  .uscita {
+    --t: var(--accent);
+    position: relative;
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    gap: 18px;
+    align-items: center;
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--t);
+  }
+
+  .tipo-gioco {
+    --t: #ff5c8a;
+  }
+
+  .tipo-hardware {
+    --t: #7c5cff;
+  }
+
+  .tipo-software {
+    --t: #18c29c;
+  }
+
+  .giorno {
+    display: grid;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  .giorno strong {
+    font-family: var(--font-head);
+    font-size: 1.9rem;
+  }
+
+  .giorno span {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    letter-spacing: 0.08em;
+  }
+
+  .u-tipo {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--t);
+  }
+
+  .info h3 {
+    font-size: 1.1rem;
+    margin: 2px 0 4px;
+  }
+
+  .info h3 a:hover {
+    color: var(--accent-2);
+  }
+
+  .info p {
+    margin: 0 0 6px;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+  }
+
+  .piattaforme {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .piattaforme span {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  .leggi {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--surface-2);
+    color: var(--text-dim);
+  }
+
+  .leggi:hover {
+    color: #fff;
+    background: var(--t);
+  }
+
+  .uscito {
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .passata {
+    opacity: 0.6;
+  }
+
+  .passata .uscito {
+    display: block;
+  }
+
+  .passata .leggi {
+    margin-top: 18px;
+  }
+
+  .avviso {
+    font-size: 0.88rem;
+  }
+
+  @media (max-width: 600px) {
+    .uscita {
+      grid-template-columns: 48px 1fr;
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .leggi {
+      display: none;
+    }
+
+    .mostra-passate {
+      margin-left: 0;
+    }
+  }
+</style>

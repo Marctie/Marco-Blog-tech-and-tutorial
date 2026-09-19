@@ -1,0 +1,612 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { PROGETTI } from '../data/progetti';
+import { TESTER_FORM } from '../site.config';
+import { url } from '../lib/utils';
+
+const app = PROGETTI.filter((p) => p.cercaTester);
+const versioniAndroid = ['Android 17', 'Android 16', 'Android 15', 'Android 14', 'Android 13', 'Android 12', 'Android 11 o precedente', 'Non lo so'];
+
+const faq = [
+  {
+    d: 'Quanto costa?',
+    r: 'Niente. Le app sono gratuite e partecipare al test non costa nulla. Non ti chiederemo mai dati di pagamento.',
+  },
+  {
+    d: 'Perché vi servono dei tester?',
+    r: 'Google chiede a chi pubblica una nuova app di farla provare prima in un "test chiuso" ad almeno 12 persone per 14 giorni di fila. Solo dopo si può pubblicare per tutti. Oltre al requisito, ci servono davvero pareri sinceri per sistemare i difetti.',
+  },
+  {
+    d: 'Cosa devo fare in pratica?',
+    r: "Installare l'app dal Play Store tramite il link che ti mandiamo, aprirla ogni tanto e tenerla installata per almeno 14 giorni. Se trovi un problema o hai un'idea, ce lo dici. Tutto qui.",
+  },
+  {
+    d: 'Perché serve proprio un indirizzo Gmail?',
+    r: "Il test chiuso funziona con gli account Google: ci serve l'indirizzo con cui accedi al Play Store sul telefono, altrimenti Google non ti fa scaricare l'app.",
+  },
+  {
+    d: 'Ho un iPhone, posso partecipare?',
+    r: 'Per ora no, le app in test sono solo per Android. Lascia comunque un occhio al sito: quando ci saranno novità le troverai qui.',
+  },
+  {
+    d: 'Posso ritirarmi?',
+    r: 'Certo. Basta disinstallare l’app e, se vuoi, dal link del test puoi anche uscire dal programma. Nessun vincolo. Ti chiediamo solo, se puoi, di arrivare ai 14 giorni: per noi fa la differenza.',
+  },
+  {
+    d: 'Che fine fanno i miei dati?',
+    r: "Usiamo nome ed email solo per aggiungerti al test e contattarti per il test stesso. Non li passiamo a nessuno e li cancelliamo quando il test finisce, oppure prima se ce lo chiedi. Trovi tutto nella pagina Privacy.",
+  },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.d, acceptedAnswer: { '@type': 'Answer', text: f.r } })),
+};
+---
+<Base
+  title="Diventa tester delle nostre app Android"
+  description="Prova gratis in anteprima le nostre app Android e aiutaci a pubblicarle sul Play Store. Bastano un account Google e 14 giorni."
+  jsonLd={jsonLd}
+>
+  <section class="t-hero">
+    <div class="wrap t-hero-grid">
+      <div>
+        <span class="eyebrow">Test chiuso Android</span>
+        <h1>Diventa <span class="gradient-text">tester</span> delle nostre app</h1>
+        <p class="lead">Prova in anteprima e gratis le app che stiamo preparando per il Play Store. Ci dai una mano enorme: senza almeno 12 tester per 14 giorni Google non ci lascia pubblicare.</p>
+        <ul class="punti">
+          <li><Icon name="check" size={18} /> Gratis, senza abbonamenti né pubblicità</li>
+          <li><Icon name="check" size={18} /> Basta un telefono Android e un account Google</li>
+          <li><Icon name="check" size={18} /> Ti bastano pochi minuti ogni tanto per 14 giorni</li>
+        </ul>
+      </div>
+      <div class="app-strip">
+        {
+          app.map((p) => (
+            <a href={url(`/progetti/${p.slug}/`)} class="app-mini" style={`--pc:${p.colore}`}>
+              <img src={url(`/img/progetti/${p.slug}/icona.png`)} alt="" width="52" height="52" />
+              <span>
+                <strong>{p.nome}</strong>
+                <small>{p.slogan}</small>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <span class="eyebrow">Come funziona</span>
+    <h2 class="section-title">Quattro passaggi, niente di complicato</h2>
+    <ol class="passi">
+      <li>
+        <span>1</span>
+        <h3>Compila il modulo</h3>
+        <p>Ci servono il tuo nome, l'indirizzo Gmail che usi sul Play Store e le app che vuoi provare.</p>
+      </li>
+      <li>
+        <span>2</span>
+        <h3>Ricevi l'invito</h3>
+        <p>Ti aggiungiamo al test e ti mandiamo via email il link ufficiale di Google per partecipare.</p>
+      </li>
+      <li>
+        <span>3</span>
+        <h3>Installa dal Play Store</h3>
+        <p>Apri il link dal telefono, tocca "Diventa un tester" e installa l'app come una qualsiasi altra.</p>
+      </li>
+      <li>
+        <span>4</span>
+        <h3>Usala per 14 giorni</h3>
+        <p>Tienila installata, aprila ogni tanto e raccontaci com'è andata. Anche le critiche sono benvenute.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="wrap section" id="modulo">
+    <div class="form-grid">
+      <form class="t-form" id="form-tester" data-provider={TESTER_FORM.provider} data-endpoint={TESTER_FORM.endpoint} novalidate>
+        <h2>Modulo di iscrizione</h2>
+        <p class="muted">I campi con * sono obbligatori.</p>
+
+        <div class="campo">
+          <label for="nome">Nome o nickname *</label>
+          <input id="nome" name="nome" type="text" required maxlength="60" autocomplete="given-name" />
+        </div>
+
+        <div class="campo">
+          <label for="email">Indirizzo Gmail del Play Store *</label>
+          <input id="email" name="email" type="email" required maxlength="120" autocomplete="email" inputmode="email" placeholder="nome@gmail.com" />
+          <small>Deve essere l'account Google con cui accedi al Play Store sul telefono.</small>
+        </div>
+
+        <fieldset class="campo">
+          <legend>Quali app vuoi provare? *</legend>
+          <div class="scelte">
+            {
+              app.map((p) => (
+                <label class="scelta">
+                  <input type="checkbox" name="app" value={p.nome} data-slug={p.slug} />
+                  <img src={url(`/img/progetti/${p.slug}/icona.png`)} alt="" width="36" height="36" />
+                  <span>
+                    <strong>{p.nome}</strong>
+                    <small>{p.stato}</small>
+                  </span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <div class="riga">
+          <div class="campo">
+            <label for="dispositivo">Modello del telefono</label>
+            <input id="dispositivo" name="dispositivo" type="text" maxlength="80" placeholder="es. Samsung Galaxy A56" />
+          </div>
+          <div class="campo">
+            <label for="android">Versione di Android</label>
+            <select id="android" name="android">
+              <option value="">Seleziona</option>
+              {versioniAndroid.map((v) => <option>{v}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="note">Vuoi dirci qualcosa? (facoltativo)</label>
+          <textarea id="note" name="note" rows="3" maxlength="600"></textarea>
+        </div>
+
+        <div class="hp" aria-hidden="true">
+          <label for="sito">Lascia vuoto questo campo</label>
+          <input id="sito" name="sito" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <label class="check">
+          <input type="checkbox" name="impegno" value="si" required />
+          <span>Mi impegno a tenere l'app installata per almeno 14 giorni e ad aprirla ogni tanto. *</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" name="privacy" value="si" required />
+          <span>Ho letto l'<a href={url('/privacy/')} target="_blank">informativa privacy</a> e acconsento all'uso dei miei dati solo per il test. *</span>
+        </label>
+
+        <p class="errore" role="alert" hidden></p>
+
+        <button type="submit" class="btn btn-primary invia">Invia la richiesta <Icon name="arrow" size={18} /></button>
+
+        <div class="ok" hidden>
+          <Icon name="check" size={32} />
+          <h3>Richiesta ricevuta, grazie!</h3>
+          <p>Ti scriveremo all'indirizzo Gmail che ci hai lasciato con il link per entrare nel test. Di solito ci vogliono uno o due giorni. Controlla anche la cartella spam o "Promozioni".</p>
+        </div>
+      </form>
+
+      <aside class="faq">
+        <h2>Domande frequenti</h2>
+        {
+          faq.map((f) => (
+            <details>
+              <summary>{f.d}</summary>
+              <p>{f.r}</p>
+            </details>
+          ))
+        }
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const form = document.getElementById('form-tester') as HTMLFormElement | null;
+  if (form) {
+    const errore = form.querySelector<HTMLElement>('.errore')!;
+    const ok = form.querySelector<HTMLElement>('.ok')!;
+    const invia = form.querySelector<HTMLButtonElement>('.invia')!;
+
+    // preseleziona l'app se arrivi da una pagina progetto
+    const scelta = new URLSearchParams(location.search).get('app');
+    form.querySelectorAll<HTMLInputElement>('input[name=app]').forEach((c) => {
+      if (!scelta || c.dataset.slug === scelta) c.checked = !!scelta;
+    });
+
+    const mostraErrore = (msg: string) => {
+      errore.textContent = msg;
+      errore.hidden = false;
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errore.hidden = true;
+      const dati = new FormData(form);
+
+      if (dati.get('sito')) return; // bot
+      const nome = String(dati.get('nome') ?? '').trim();
+      const email = String(dati.get('email') ?? '').trim();
+      const app = dati.getAll('app');
+
+      if (!nome) return mostraErrore('Scrivi il tuo nome o un nickname.');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return mostraErrore("Controlla l'indirizzo email, sembra non essere valido.");
+      if (!app.length) return mostraErrore('Scegli almeno una app da provare.');
+      if (!dati.get('impegno') || !dati.get('privacy')) return mostraErrore('Per continuare devi spuntare le due caselle in fondo.');
+
+      const endpoint = form.dataset.endpoint;
+      if (!endpoint) {
+        return mostraErrore('Il modulo è in manutenzione in questo momento. Riprova tra qualche ora, grazie della pazienza.');
+      }
+
+      const corpo = new URLSearchParams();
+      corpo.set('nome', nome);
+      corpo.set('email', email);
+      corpo.set('app', app.join(', '));
+      corpo.set('dispositivo', String(dati.get('dispositivo') ?? ''));
+      corpo.set('android', String(dati.get('android') ?? ''));
+      corpo.set('note', String(dati.get('note') ?? ''));
+      corpo.set('pagina', location.href);
+
+      invia.disabled = true;
+      invia.textContent = 'Invio in corso...';
+      try {
+        if (form.dataset.provider === 'formspree') {
+          const r = await fetch(endpoint, { method: 'POST', body: corpo, headers: { Accept: 'application/json' } });
+          if (!r.ok) throw new Error(String(r.status));
+        } else {
+          // Google Apps Script non restituisce intestazioni CORS: la risposta è opaca
+          await fetch(endpoint, { method: 'POST', mode: 'no-cors', body: corpo });
+        }
+        form.querySelectorAll('.campo, .riga, .check, .invia, h2, .muted').forEach((el) => ((el as HTMLElement).hidden = true));
+        ok.hidden = false;
+        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch {
+        mostraErrore("Qualcosa è andato storto durante l'invio. Controlla la connessione e riprova.");
+        invia.disabled = false;
+        invia.textContent = 'Invia la richiesta';
+      }
+    });
+  }
+</script>
+
+<style>
+  .t-hero {
+    padding: 64px 0 32px;
+    background:
+      radial-gradient(circle at 90% 10%, rgba(24, 214, 196, 0.2), transparent 45%),
+      radial-gradient(circle at 5% 30%, rgba(124, 92, 255, 0.25), transparent 50%);
+  }
+
+  .t-hero-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  h1 {
+    font-size: clamp(2.2rem, 5.5vw, 3.5rem);
+    margin-bottom: 16px;
+  }
+
+  .lead {
+    font-size: 1.15rem;
+    color: var(--text-dim);
+    margin: 0 0 20px;
+  }
+
+  .punti {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 8px;
+  }
+
+  .punti li {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .punti :global(svg) {
+    color: var(--accent-2);
+  }
+
+  .app-strip {
+    display: grid;
+    gap: 12px;
+  }
+
+  .app-mini {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .app-mini:hover {
+    border-color: var(--pc);
+    transform: translateX(4px);
+  }
+
+  .app-mini img {
+    border-radius: 13px;
+  }
+
+  .app-mini small {
+    display: block;
+    color: var(--text-faint);
+  }
+
+  .passi {
+    list-style: none;
+    padding: 0;
+    margin: 28px 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  .passi li {
+    padding: 24px;
+    border-radius: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .passi span {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--gradient);
+    color: #fff;
+    font-weight: 700;
+    font-family: var(--font-head);
+    margin-bottom: 14px;
+  }
+
+  .passi h3 {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+
+  .passi p {
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .t-form {
+    padding: 32px;
+    border-radius: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    display: grid;
+    gap: 18px;
+    scroll-margin-top: 90px;
+  }
+
+  .t-form h2 {
+    font-size: 1.5rem;
+  }
+
+  .t-form > .muted {
+    margin: -10px 0 0;
+    font-size: 0.9rem;
+  }
+
+  .campo {
+    display: grid;
+    gap: 6px;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+
+  .campo label,
+  legend {
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0;
+    margin-bottom: 6px;
+  }
+
+  .campo small {
+    color: var(--text-faint);
+    font-size: 0.83rem;
+  }
+
+  input[type='text'],
+  input[type='email'],
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border-strong);
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 1rem;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: 0;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+
+  .riga {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .scelte {
+    display: grid;
+    gap: 8px;
+  }
+
+  .scelta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: 1px solid var(--border-strong);
+    cursor: pointer;
+    font-weight: 400 !important;
+    margin: 0 !important;
+  }
+
+  .scelta:has(input:checked) {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  }
+
+  .scelta img {
+    border-radius: 9px;
+  }
+
+  .scelta small {
+    display: block;
+    color: var(--text-faint);
+  }
+
+  input[type='checkbox'] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .check {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 0.93rem;
+    color: var(--text-dim);
+    cursor: pointer;
+  }
+
+  .check a {
+    color: var(--accent-2);
+    text-decoration: underline;
+  }
+
+  .hp {
+    position: absolute;
+    left: -9999px;
+  }
+
+  .errore {
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: color-mix(in srgb, #e5484d 14%, var(--surface));
+    border: 1px solid color-mix(in srgb, #e5484d 45%, transparent);
+  }
+
+  .invia {
+    justify-self: start;
+    font-size: 1.02rem;
+    padding: 14px 24px;
+  }
+
+  .invia:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+
+  .ok {
+    text-align: center;
+    padding: 24px 8px;
+  }
+
+  .ok :global(svg) {
+    margin: 0 auto 12px;
+    width: 64px;
+    height: 64px;
+    padding: 14px;
+    border-radius: 50%;
+    background: var(--gradient);
+    color: #fff;
+  }
+
+  .ok h3 {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+  }
+
+  .ok p {
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  .faq h2 {
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+  }
+
+  details {
+    border-bottom: 1px solid var(--border);
+    padding: 14px 0;
+  }
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  summary::after {
+    content: '+';
+    color: var(--accent-2);
+    font-size: 1.3rem;
+    line-height: 1;
+  }
+
+  details[open] summary::after {
+    content: '−';
+  }
+
+  details p {
+    color: var(--text-dim);
+    margin: 10px 0 0;
+    font-size: 0.96rem;
+  }
+
+  @media (max-width: 900px) {
+    .t-hero-grid,
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .t-form {
+      padding: 22px 18px;
+    }
+
+    .riga {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

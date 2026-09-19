@@ -1,0 +1,653 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import RowCard from '../components/RowCard.astro';
+import TesterBanner from '../components/TesterBanner.astro';
+import { SITE, CATEGORIE, DISPOSITIVI, CANALI_YOUTUBE } from '../site.config';
+import { PROGETTI } from '../data/progetti';
+import { USCITE } from '../data/uscite';
+import { getArticoli, url, linkArticolo, copertina, dataLunga, minutiLettura } from '../lib/utils';
+
+const tutti = await getArticoli();
+const notizie = tutti.filter((a) => a.data.tipo === 'notizia');
+const primo = tutti.find((a) => a.data.evidenza) ?? tutti[0];
+const laterali = notizie.filter((a) => a.id !== primo.id).slice(0, 4);
+// ogni articolo compare una sola volta nella home
+const usati = new Set([primo.id, ...laterali.map((a) => a.id)]);
+const prendi = (lista: typeof tutti, n: number) => {
+  const scelti = lista.filter((a) => !usati.has(a.id)).slice(0, n);
+  scelti.forEach((a) => usati.add(a.id));
+  return scelti;
+};
+const ultime = prendi(notizie, 6);
+if (ultime.length < 6) ultime.push(...prendi(tutti.filter((a) => a.data.tipo !== 'problema' && a.data.tipo !== 'tutorial'), 6 - ultime.length));
+const tutorial = prendi(tutti.filter((a) => a.data.tipo === 'tutorial'), 4);
+const problemi = prendi(tutti.filter((a) => a.data.tipo === 'problema'), 6);
+const gaming = prendi(tutti.filter((a) => a.data.categoria === 'gaming' || a.data.categoria === 'console'), 4);
+const approfondimenti = prendi(tutti.filter((a) => a.data.tipo === 'approfondimento' || a.data.tipo === 'guida-acquisto'), 3);
+const prossime = [...USCITE].sort((a, b) => a.data.localeCompare(b.data));
+const catPrimo = CATEGORIE[primo.data.categoria];
+
+const iconeDisp: Record<string, string> = {
+  android: 'android',
+  iphone: 'apple',
+  windows: 'windows',
+  console: 'gamepad',
+  rete: 'wifi',
+  app: 'grid',
+  accessori: 'headphones',
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE.name,
+  url: new URL(url('/'), Astro.site).toString(),
+  inLanguage: 'it-IT',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${new URL(url('/cerca/'), Astro.site).toString()}?q={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
+};
+---
+<Base jsonLd={jsonLd}>
+  <!-- In primo piano -->
+  <section class="wrap hero">
+    <article class="hero-main" style={`--cat:${catPrimo.colore}`}>
+      <a href={linkArticolo(primo)} class="hero-img">
+        <img src={copertina(primo)} alt="" width="1200" height="675" />
+      </a>
+      <div class="hero-text">
+        <span class="badge">In primo piano · {catPrimo.nome}</span>
+        <h1><a href={linkArticolo(primo)}>{primo.data.title}</a></h1>
+        <p>{primo.data.description}</p>
+        <div class="meta">
+          <span><Icon name="calendar" size={14} /> {dataLunga(primo.data.date)}</span>
+          <span><Icon name="clock" size={14} /> {minutiLettura(primo.body)} min</span>
+        </div>
+      </div>
+    </article>
+    <aside class="hero-side">
+      <h2 class="side-title">Ultime notizie</h2>
+      {laterali.map((a) => <RowCard articolo={a} />)}
+      <a href={url('/notizie/')} class="section-link">Tutte le notizie <Icon name="arrow" size={16} /></a>
+    </aside>
+  </section>
+
+  <!-- Ho un problema -->
+  <section class="wrap">
+    <div class="problema-band">
+      <div class="pb-text">
+        <span class="eyebrow">Assistenza fai da te</span>
+        <h2>Qualcosa non funziona?</h2>
+        <p>Scrivi cosa succede e cerca tra le nostre soluzioni passo passo. Si parte sempre da quelle più semplici.</p>
+      </div>
+      <form action={url('/ho-un-problema/')} method="get" class="pb-form" role="search">
+        <label class="search-field">
+          <Icon name="search" />
+          <span class="sr-only">Descrivi il problema</span>
+          <input type="search" name="q" placeholder="es. il telefono si scarica subito" />
+        </label>
+        <button class="btn btn-primary" type="submit">Cerca soluzione</button>
+      </form>
+      <div class="pb-disp">
+        {
+          Object.entries(DISPOSITIVI).map(([id, nome]) => (
+            <a class="chip" href={`${url('/ho-un-problema/')}?d=${id}#elenco`}>
+              <Icon name={iconeDisp[id]} size={16} /> {nome}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Notizie -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Notizie</span>
+          <h2 class="section-title">Le ultime dal mondo tech</h2>
+        </div>
+        <a class="section-link" href={url('/notizie/')}>Vedi tutte <Icon name="arrow" size={16} /></a>
+      </div>
+      <div class="grid grid-3">{ultime.map((a) => <ArticleCard articolo={a} />)}</div>
+    </div>
+  </section>
+
+  <!-- Tutorial + problemi -->
+  <section class="section">
+    <div class="wrap duo">
+      <div>
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Tutorial</span>
+            <h2 class="section-title">Impara a farlo da solo</h2>
+          </div>
+          <a class="section-link" href={url('/tutorial/')}>Tutti i tutorial <Icon name="arrow" size={16} /></a>
+        </div>
+        <div class="grid tut-grid">{tutorial.map((a) => <ArticleCard articolo={a} mostraTipo={false} />)}</div>
+      </div>
+      <aside class="problemi-box">
+        <h2><Icon name="wrench" size={20} /> Problemi risolti</h2>
+        <ol>
+          {
+            problemi.map((a) => (
+              <li>
+                <a href={linkArticolo(a)}>
+                  <span class="p-disp">{a.data.dispositivo ? DISPOSITIVI[a.data.dispositivo] : ''}</span>
+                  {a.data.title}
+                </a>
+              </li>
+            ))
+          }
+        </ol>
+        <a class="btn btn-ghost" href={url('/ho-un-problema/')}>Tutte le soluzioni</a>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Gaming + uscite -->
+  <section class="section gaming">
+    <div class="wrap duo">
+      <div>
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Gaming e console</span>
+            <h2 class="section-title">Si gioca</h2>
+          </div>
+          <a class="section-link" href={url('/articoli/categoria/gaming/')}>Altro gaming <Icon name="arrow" size={16} /></a>
+        </div>
+        <div class="grid tut-grid">{gaming.map((a) => <ArticleCard articolo={a} />)}</div>
+      </div>
+      <aside class="uscite-box">
+        <h2><Icon name="calendar" size={20} /> Prossime uscite</h2>
+        <ol>
+          {
+            prossime.map((u) => (
+              <li data-data={u.data}>
+                <time>
+                  {u.data.length === 10
+                    ? new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'short' }).format(new Date(`${u.data}T12:00:00`))
+                    : 'In arrivo'}
+                </time>
+                <span>
+                  <strong>{u.titolo}</strong>
+                  <small>{u.piattaforme.join(' · ')}</small>
+                </span>
+              </li>
+            ))
+          }
+        </ol>
+        <a class="btn btn-ghost" href={url('/uscite/')}>Calendario completo</a>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Approfondimenti -->
+  {
+    approfondimenti.length > 0 && (
+      <section class="section">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Da leggere con calma</span>
+              <h2 class="section-title">Approfondimenti e guide all'acquisto</h2>
+            </div>
+            <a class="section-link" href={url('/articoli/?tipo=approfondimento')}>
+              Altri approfondimenti <Icon name="arrow" size={16} />
+            </a>
+          </div>
+          <div class="grid grid-3">{approfondimenti.map((a) => <ArticleCard articolo={a} />)}</div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Progetti -->
+  <section class="section">
+    <div class="wrap">
+      <div class="progetti-band">
+        <div>
+          <span class="eyebrow">Il nostro laboratorio</span>
+          <h2 class="section-title">Non solo articoli: costruiamo anche app</h2>
+          <p class="muted">Piccole app utili, senza pubblicità e con i dati che restano sul telefono. Alcune stanno per arrivare sul Play Store.</p>
+          <a class="btn btn-primary" href={url('/progetti/')}>Scopri i progetti <Icon name="arrow" size={18} /></a>
+        </div>
+        <div class="app-grid">
+          {
+            PROGETTI.map((p) => (
+              <a href={url(`/progetti/${p.slug}/`)} class="app-tile" style={`--pc:${p.colore}`}>
+                <img src={url(`/img/progetti/${p.slug}/icona.png`)} alt="" width="64" height="64" loading="lazy" />
+                <strong>{p.nome}</strong>
+                <small>{p.stato}</small>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+      <TesterBanner />
+    </div>
+  </section>
+
+  <!-- Categorie -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Esplora</span>
+          <h2 class="section-title">Scegli un argomento</h2>
+        </div>
+      </div>
+      <div class="cat-grid">
+        {
+          Object.entries(CATEGORIE).map(([id, c]) => (
+            <a href={url(`/articoli/categoria/${id}/`)} class="cat-box" style={`--cat:${c.colore}`}>
+              <Icon name={c.icona} size={28} />
+              <strong>{c.nome}</strong>
+              <span>{tutti.filter((a) => a.data.categoria === id).length} articoli</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Canali YouTube -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Da guardare</span>
+          <h2 class="section-title">I canali YouTube italiani che seguiamo</h2>
+        </div>
+        <a class="section-link" href={url('/canali-consigliati/')}>Tutti i canali <Icon name="arrow" size={16} /></a>
+      </div>
+      <div class="yt-strip">
+        {
+          CANALI_YOUTUBE.slice(0, 6).map((c) => (
+            <a href={c.url} target="_blank" rel="noopener" class="yt-card">
+              <span class="yt-logo">
+                <Icon name="youtube" size={22} />
+              </span>
+              <strong>{c.nome}</strong>
+              <small>{c.temi}</small>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  // nasconde dalla home le uscite già passate e ne mostra al massimo 6
+  const oggi = new Date().toISOString().slice(0, 10);
+  let mostrate = 0;
+  document.querySelectorAll<HTMLElement>('.uscite-box li').forEach((li) => {
+    const d = li.dataset.data ?? '';
+    const passata = d.length === 10 ? d < oggi : d < oggi.slice(0, 7);
+    li.hidden = passata || mostrate >= 6;
+    if (!li.hidden) mostrate++;
+  });
+</script>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: 1.75fr 1fr;
+    gap: 32px;
+    padding-top: 36px;
+  }
+
+  .hero-main {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .hero-img {
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .hero-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s;
+  }
+
+  .hero-main:hover .hero-img img {
+    transform: scale(1.03);
+  }
+
+  .hero-text {
+    padding: 24px 28px 28px;
+    display: grid;
+    gap: 12px;
+  }
+
+  .hero-text h1 {
+    font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+  }
+
+  .hero-text h1 a:hover {
+    color: var(--accent-2);
+  }
+
+  .hero-text p {
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 1.05rem;
+  }
+
+  .side-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-faint);
+    margin: 0 0 8px 10px;
+  }
+
+  .hero-side {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .hero-side .section-link {
+    margin: 10px 0 0 10px;
+  }
+
+  .problema-band {
+    margin-top: 48px;
+    padding: 36px;
+    border-radius: 24px;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(255, 107, 157, 0.22), transparent 50%),
+      radial-gradient(circle at 0% 100%, rgba(124, 92, 255, 0.28), transparent 55%),
+      var(--surface);
+    border: 1px solid var(--border-strong);
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 20px 36px;
+    align-items: center;
+  }
+
+  .pb-text h2 {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    margin-bottom: 8px;
+  }
+
+  .pb-text p {
+    margin: 0;
+    color: var(--text-dim);
+  }
+
+  .pb-form {
+    display: flex;
+    gap: 10px;
+  }
+
+  .pb-form .search-field {
+    flex: 1;
+  }
+
+  .pb-form .btn {
+    height: 56px;
+  }
+
+  .pb-disp {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .duo {
+    display: grid;
+    grid-template-columns: 1.9fr 1fr;
+    gap: 36px;
+    align-items: start;
+  }
+
+  .tut-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  .problemi-box,
+  .uscite-box {
+    padding: 24px;
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    position: sticky;
+    top: 90px;
+  }
+
+  .problemi-box h2,
+  .uscite-box h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    margin-bottom: 14px;
+  }
+
+  .problemi-box h2 :global(svg),
+  .uscite-box h2 :global(svg) {
+    color: var(--accent-2);
+  }
+
+  .problemi-box ol,
+  .uscite-box ol {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 18px;
+    display: grid;
+  }
+
+  .problemi-box li a {
+    display: block;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    font-size: 0.97rem;
+  }
+
+  .problemi-box li a:hover {
+    color: var(--accent-2);
+  }
+
+  .p-disp {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-faint);
+    margin-bottom: 2px;
+  }
+
+  .uscite-box li {
+    display: grid;
+    grid-template-columns: 62px 1fr;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+  }
+
+  .uscite-box time {
+    font-family: var(--font-head);
+    font-weight: 700;
+    color: var(--accent-3);
+    font-size: 0.95rem;
+  }
+
+  .uscite-box strong {
+    display: block;
+    font-size: 0.95rem;
+  }
+
+  .uscite-box small {
+    color: var(--text-faint);
+  }
+
+  .progetti-band {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 36px;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .progetti-band p {
+    margin: 12px 0 22px;
+  }
+
+  .app-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .app-tile {
+    display: grid;
+    gap: 4px;
+    padding: 20px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, color-mix(in srgb, var(--pc) 20%, var(--surface)), var(--surface));
+    border: 1px solid color-mix(in srgb, var(--pc) 35%, var(--border));
+    transition: transform 0.2s;
+  }
+
+  .app-tile:hover {
+    transform: translateY(-4px);
+  }
+
+  .app-tile img {
+    border-radius: 16px;
+    margin-bottom: 8px;
+  }
+
+  .app-tile small {
+    color: var(--text-dim);
+  }
+
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+  }
+
+  .cat-box {
+    display: grid;
+    gap: 6px;
+    padding: 20px;
+    border-radius: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .cat-box :global(svg) {
+    color: var(--cat);
+    margin-bottom: 6px;
+  }
+
+  .cat-box:hover {
+    border-color: var(--cat);
+    transform: translateY(-3px);
+  }
+
+  .cat-box span {
+    font-size: 0.82rem;
+    color: var(--text-faint);
+  }
+
+  .yt-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+  }
+
+  .yt-card {
+    display: grid;
+    gap: 6px;
+    padding: 18px;
+    border-radius: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+
+  .yt-card:hover {
+    border-color: #ff3d3d;
+  }
+
+  .yt-logo {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #ff3d3d;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .yt-card small {
+    color: var(--text-faint);
+    font-size: 0.83rem;
+  }
+
+  @media (max-width: 1000px) {
+    .hero,
+    .duo,
+    .progetti-band,
+    .problema-band {
+      grid-template-columns: 1fr;
+    }
+
+    .problemi-box,
+    .uscite-box {
+      position: static;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .hero {
+      padding-top: 20px;
+    }
+
+    .hero-text {
+      padding: 18px 18px 22px;
+    }
+
+    .problema-band {
+      padding: 24px 18px;
+      margin-top: 32px;
+    }
+
+    .pb-form {
+      flex-direction: column;
+    }
+
+    .app-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .app-tile {
+      padding: 14px;
+    }
+  }
+</style>

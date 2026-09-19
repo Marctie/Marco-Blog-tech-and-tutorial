@@ -1,0 +1,131 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import TesterBanner from '../../components/TesterBanner.astro';
+import { PROGETTI } from '../../data/progetti';
+import { url } from '../../lib/utils';
+---
+<Base title="I nostri progetti" description="Le app che stiamo sviluppando nel nostro laboratorio: FinanzAI, Device Test Pro, Dispensina Digitale e ScoutSafe.">
+  <div class="wrap">
+    <header class="page-hero">
+      <span class="eyebrow">Il nostro laboratorio</span>
+      <h1>I nostri progetti</h1>
+      <p>Oltre a scrivere di tecnologia, ogni tanto ci sporchiamo le mani e costruiamo qualcosa. Queste sono le app a cui stiamo lavorando: semplici, senza pubblicità e con i dati che restano sul tuo telefono.</p>
+    </header>
+
+    <div class="prog-grid">
+      {
+        PROGETTI.map((p) => (
+          <a href={url(`/progetti/${p.slug}/`)} class="prog-card" style={`--pc:${p.colore}`}>
+            <div class="prog-cover">
+              {p.copertina && <img src={url(`/img/progetti/${p.slug}/${p.copertina}`)} alt="" loading="lazy" width="1024" height="500" />}
+            </div>
+            <div class="prog-body">
+              <div class="prog-top">
+                <img class="prog-icon" src={url(`/img/progetti/${p.slug}/icona.png`)} alt={`Logo ${p.nome}`} width="56" height="56" />
+                <div>
+                  <h2>{p.nome}</h2>
+                  <span class="muted">{p.categoria} · {p.piattaforma}</span>
+                </div>
+              </div>
+              <p>{p.sintesi}</p>
+              <div class="prog-foot">
+                <span class="stato">{p.stato}</span>
+                <span class="section-link">Scopri di più <Icon name="arrow" size={16} /></span>
+              </div>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+
+    <TesterBanner />
+  </div>
+</Base>
+
+<style>
+  .prog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .prog-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 22px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+  }
+
+  .prog-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--pc);
+    box-shadow: var(--shadow);
+  }
+
+  .prog-cover {
+    aspect-ratio: 1024 / 500;
+    background: var(--pc);
+  }
+
+  .prog-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .prog-body {
+    padding: 22px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex: 1;
+  }
+
+  .prog-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .prog-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+
+  .prog-top span {
+    font-size: 0.88rem;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-dim);
+  }
+
+  .prog-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .stato {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--pc) 22%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--pc) 45%, transparent);
+  }
+</style>

@@ -1,0 +1,18 @@
+---
+import { CATEGORIE, TIPI } from '../site.config';
+import { type Articolo, linkArticolo, copertina, dataBreve } from '../lib/utils';
+
+interface Props {
+  articolo: Articolo;
+}
+const { articolo: a } = Astro.props;
+const cat = CATEGORIE[a.data.categoria];
+---
+<article class="row-card" style={`--cat:${cat.colore}`}>
+  <img src={copertina(a)} alt="" loading="lazy" width="120" height="75" />
+  <div>
+    <span class="badge">{a.data.tipo === 'notizia' ? cat.breve : TIPI[a.data.tipo].nome}</span>
+    <h3><a href={linkArticolo(a)}>{a.data.title}</a></h3>
+    <span class="meta">{dataBreve(a.data.date)}</span>
+  </div>
+</article>

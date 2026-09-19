@@ -1,0 +1,71 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { CANALI_YOUTUBE } from '../site.config';
+---
+<Base title="Canali YouTube consigliati" description="I canali YouTube italiani di tecnologia e videogiochi che seguiamo e che ti consigliamo.">
+  <div class="wrap">
+    <header class="page-hero">
+      <span class="eyebrow">Da guardare</span>
+      <h1>I canali YouTube che seguiamo</h1>
+      <p>A volte un video spiega meglio di mille parole. Questi sono i canali italiani che guardiamo anche noi per recensioni, prove e novità. Nessuno ci paga per consigliarli.</p>
+    </header>
+    <div class="canali">
+      {
+        CANALI_YOUTUBE.map((c) => (
+          <a href={c.url} target="_blank" rel="noopener" class="canale">
+            <span class="logo">
+              <Icon name="youtube" size={24} />
+            </span>
+            <span class="testo">
+              <strong>{c.nome}</strong>
+              <small>{c.temi}</small>
+            </span>
+            <Icon name="external" size={18} />
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</Base>
+
+<style>
+  .canali {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+  }
+
+  .canale {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 18px;
+    border-radius: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-faint);
+    transition: border-color 0.2s;
+  }
+
+  .canale:hover {
+    border-color: #ff3d3d;
+  }
+
+  .logo {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: #ff3d3d;
+    color: #fff;
+  }
+
+  .testo strong {
+    display: block;
+    color: var(--text);
+    font-size: 1.05rem;
+  }
+</style>

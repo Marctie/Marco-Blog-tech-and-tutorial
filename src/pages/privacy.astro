@@ -1,0 +1,50 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../site.config';
+import { url } from '../lib/utils';
+---
+<Base title="Privacy" description={`Informativa sul trattamento dei dati personali di ${SITE.name}.`}>
+  <div class="wrap privacy">
+    <header class="page-hero">
+      <span class="eyebrow">Informativa</span>
+      <h1>Privacy</h1>
+      <p>In breve: questo sito non usa cookie di profilazione, non ha pubblicità e raccoglie dati solo se compili il modulo per diventare tester.</p>
+    </header>
+
+    <div class="prose">
+      <p><em>Ultimo aggiornamento: 19 settembre 2026</em></p>
+
+      <h2>1. Navigazione del sito</h2>
+      <p>{SITE.name} non utilizza cookie di profilazione né strumenti di analisi che tracciano i visitatori. Il sito salva nel tuo browser (localStorage) solo la preferenza tra tema chiaro e scuro, che non viene inviata a nessuno.</p>
+      <p>Il sito è ospitato su GitHub Pages. Come ogni servizio di hosting, i server possono registrare dati tecnici come l'indirizzo IP per motivi di sicurezza e funzionamento. I caratteri tipografici sono caricati da Google Fonts, che riceve l'indirizzo IP del visitatore per poter servire i file.</p>
+
+      <h2>2. Modulo "Diventa tester"</h2>
+      <p>Se compili il <a href={url('/diventa-tester/')}>modulo per diventare tester</a> raccogliamo:</p>
+      <ul>
+        <li>nome o nickname;</li>
+        <li>indirizzo email Google (Gmail);</li>
+        <li>le app che vuoi provare;</li>
+        <li>facoltativamente modello del telefono, versione di Android e un messaggio.</li>
+      </ul>
+      <p><strong>A cosa servono:</strong> esclusivamente per aggiungerti alla lista dei tester del programma di test chiuso di Google Play e per contattarti riguardo al test (invio del link di partecipazione, eventuali domande sul funzionamento dell'app).</p>
+      <p><strong>Base giuridica:</strong> il tuo consenso, espresso spuntando l'apposita casella. Puoi ritirarlo in qualsiasi momento.</p>
+      <p><strong>Dove finiscono:</strong> le risposte vengono salvate in un foglio di calcolo privato accessibile solo alla redazione. Il tuo indirizzo email viene inserito nella lista tester della Google Play Console, gestita da Google secondo la propria informativa. Non vendiamo né cediamo i dati a terzi e non li usiamo per newsletter o pubblicità.</p>
+      <p><strong>Per quanto tempo:</strong> fino alla fine del periodo di test dell'app scelta e comunque non oltre 12 mesi, salvo tua richiesta di cancellazione anticipata.</p>
+
+      <h2>3. Link esterni</h2>
+      <p>Negli articoli trovi link a fonti esterne e a canali YouTube. Quando li apri valgono le informative di quei siti, su cui non abbiamo controllo.</p>
+
+      <h2>4. I tuoi diritti</h2>
+      <p>In base al Regolamento UE 2016/679 (GDPR) puoi chiedere in qualsiasi momento di accedere ai tuoi dati, correggerli, cancellarli o limitarne l'uso, e puoi presentare reclamo al Garante per la protezione dei dati personali. Per esercitare i tuoi diritti rispondi all'email con cui ti abbiamo inviato l'invito al test, oppure scrivi nel campo messaggi del modulo tester indicando la richiesta.</p>
+
+      <h2>5. Modifiche</h2>
+      <p>Se cambiamo qualcosa in questa pagina aggiorniamo la data in alto.</p>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .privacy {
+    max-width: 820px;
+  }
+</style>

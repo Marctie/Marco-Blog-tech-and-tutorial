@@ -1,0 +1,71 @@
+---
+import Icon from './Icon.astro';
+import { SITE, CATEGORIE } from '../site.config';
+import { url } from '../lib/utils';
+
+const path = Astro.url.pathname;
+const attivo = (p: string) => (path.startsWith(url(p)) ? 'page' : undefined);
+---
+<header class="site-header" id="site-header">
+  <div class="wrap header-row">
+    <a href={url('/')} class="brand" aria-label={`${SITE.name}, home`}>
+      <img src={url('/logo.svg')} alt="" width="34" height="34" />
+      <span>Tasto<span class="gradient-text">Reset</span></span>
+    </a>
+
+    <nav class="main-nav" aria-label="Navigazione principale">
+      <a href={url('/')} aria-current={path === url('/') ? 'page' : undefined}>Home</a>
+      <a href={url('/notizie/')} aria-current={attivo('/notizie/')}>Notizie</a>
+      <div class="nav-drop">
+        <button type="button" aria-haspopup="true">Articoli</button>
+        <div class="nav-drop-menu">
+          <a href={url('/articoli/')}><span class="dot" style="background:var(--text-faint)"></span>Tutti gli articoli</a>
+          {
+            Object.entries(CATEGORIE).map(([id, c]) => (
+              <a href={url(`/articoli/categoria/${id}/`)}>
+                <span class="dot" style={`background:${c.colore}`} />
+                {c.nome}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+      <a href={url('/ho-un-problema/')} aria-current={attivo('/ho-un-problema/')}>Ho un problema</a>
+      <a href={url('/tutorial/')} aria-current={attivo('/tutorial/')}>Tutorial</a>
+      <a href={url('/uscite/')} aria-current={attivo('/uscite/')}>Uscite</a>
+      <a href={url('/progetti/')} aria-current={attivo('/progetti/')}>Progetti</a>
+      <a href={url('/diventa-tester/')} class="nav-cta">Diventa tester</a>
+    </nav>
+
+    <div class="header-tools">
+      <a href={url('/cerca/')} class="icon-btn" aria-label="Cerca"><Icon name="search" /></a>
+      <button type="button" class="icon-btn theme-toggle" id="theme-toggle" aria-label="Cambia tema">
+        <Icon name="moon" class="i-moon" />
+        <Icon name="sun" class="i-sun" />
+      </button>
+      <button type="button" class="icon-btn menu-toggle" id="menu-toggle" aria-label="Apri menu" aria-expanded="false">
+        <Icon name="menu" />
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  const header = document.getElementById('site-header');
+  const menuBtn = document.getElementById('menu-toggle');
+  menuBtn?.addEventListener('click', () => {
+    const open = header?.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', String(!!open));
+  });
+
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const root = document.documentElement;
+    const attuale =
+      root.dataset.theme ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    const nuovo = attuale === 'light' ? 'dark' : 'light';
+    root.dataset.theme = nuovo;
+    try {
+      localStorage.setItem('tema', nuovo);
+    } catch (e) {}
+  });
+</script>

@@ -1,0 +1,133 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { url } from '../lib/utils';
+---
+<Base title="Cerca" description="Cerca tra notizie, tutorial, guide e soluzioni ai problemi." noindex>
+  <div class="wrap cerca">
+    <header class="page-hero">
+      <h1>Cerca</h1>
+      <p>Notizie, tutorial, guide e soluzioni ai problemi: scrivi due o tre parole chiave.</p>
+    </header>
+    <form role="search" id="form-cerca" data-indice={url('/search-index.json')}>
+      <label class="search-field">
+        <Icon name="search" />
+        <span class="sr-only">Cosa stai cercando?</span>
+        <input type="search" name="q" id="q" placeholder="es. batteria android, gta 6, wifi lento" autocomplete="off" autofocus />
+      </label>
+    </form>
+    <p class="conteggio muted" id="conteggio"></p>
+    <ol class="risultati" id="risultati"></ol>
+  </div>
+</Base>
+
+<script>
+  type Voce = { t: string; d: string; u: string; c: string; k: string; tipo: string; data: string };
+  const form = document.getElementById('form-cerca') as HTMLFormElement;
+  const input = document.getElementById('q') as HTMLInputElement;
+  const lista = document.getElementById('risultati')!;
+  const conteggio = document.getElementById('conteggio')!;
+  let indice: Voce[] = [];
+
+  const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+
+  function cerca() {
+    const q = norm(input.value.trim());
+    const u = new URL(location.href);
+    if (q) u.searchParams.set('q', input.value.trim());
+    else u.searchParams.delete('q');
+    history.replaceState(null, '', u);
+    if (!q) {
+      lista.innerHTML = '';
+      conteggio.textContent = '';
+      return;
+    }
+    const parole = q.split(/\s+/);
+    const trovati = indice
+      .map((v) => {
+        const titolo = norm(v.t);
+        const resto = norm(`${v.d} ${v.k} ${v.c}`);
+        let p = 0;
+        for (const w of parole) {
+          if (titolo.includes(w)) p += 3;
+          else if (resto.includes(w)) p += 1;
+          else return { v, p: 0 };
+        }
+        return { v, p };
+      })
+      .filter((x) => x.p > 0)
+      .sort((a, b) => b.p - a.p || b.v.data.localeCompare(a.v.data));
+
+    conteggio.textContent = trovati.length
+      ? `${trovati.length} risultat${trovati.length === 1 ? 'o' : 'i'}`
+      : 'Nessun risultato. Prova con parole più semplici o diverse.';
+    lista.innerHTML = trovati
+      .map(
+        ({ v }) => `<li><a href="${v.u}"><span class="r-tipo">${esc(v.tipo)} · ${esc(v.c)}</span><strong>${esc(v.t)}</strong><span class="r-desc">${esc(v.d)}</span></a></li>`,
+      )
+      .join('');
+  }
+
+  fetch(form.dataset.indice!)
+    .then((r) => r.json())
+    .then((dati: Voce[]) => {
+      indice = dati;
+      const q = new URLSearchParams(location.search).get('q');
+      if (q) input.value = q;
+      cerca();
+    });
+
+  input.addEventListener('input', cerca);
+  form.addEventListener('submit', (e) => e.preventDefault());
+</script>
+
+<style>
+  .cerca {
+    max-width: 820px;
+  }
+
+  .conteggio {
+    margin: 18px 0 8px;
+    font-size: 0.92rem;
+  }
+
+  .risultati {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 10px;
+  }
+
+  .risultati :global(a) {
+    display: grid;
+    gap: 4px;
+    padding: 18px 20px;
+    border-radius: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .risultati :global(a:hover) {
+    border-color: var(--accent);
+  }
+
+  .risultati :global(.r-tipo) {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--accent-2);
+  }
+
+  .risultati :global(strong) {
+    font-family: var(--font-head);
+    font-size: 1.12rem;
+  }
+
+  .risultati :global(.r-desc) {
+    color: var(--text-dim);
+    font-size: 0.93rem;
+  }
+</style>

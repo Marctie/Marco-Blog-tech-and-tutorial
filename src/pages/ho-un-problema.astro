@@ -1,0 +1,132 @@
+---
+import Base from '../layouts/Base.astro';
+import ArticleGrid from '../components/ArticleGrid.astro';
+import Icon from '../components/Icon.astro';
+import { DISPOSITIVI } from '../site.config';
+import { getArticoli, url } from '../lib/utils';
+
+const problemi = (await getArticoli()).filter((a) => a.data.tipo === 'problema');
+const icone: Record<string, string> = {
+  android: 'android',
+  iphone: 'apple',
+  windows: 'windows',
+  console: 'gamepad',
+  rete: 'wifi',
+  app: 'grid',
+  accessori: 'headphones',
+};
+const conta = (id: string) => problemi.filter((p) => p.data.dispositivo === id).length;
+---
+<Base
+  title="Ho un problema"
+  description="Telefono lento, Wi-Fi che non va, console che non si accende, PC con schermata blu? Soluzioni passo passo ai problemi tech più comuni."
+>
+  <section class="hup-hero">
+    <div class="wrap">
+      <span class="eyebrow">Assistenza fai da te</span>
+      <h1>Ho un problema</h1>
+      <p>Prima di correre in assistenza (o di lanciare il telefono dalla finestra), prova da qui. Scrivi cosa succede o scegli il dispositivo: ogni guida parte dalle soluzioni più semplici e arriva a quelle più drastiche.</p>
+      <div class="dev-tiles">
+        {
+          Object.entries(DISPOSITIVI)
+            .filter(([id]) => conta(id) > 0)
+            .map(([id, nome]) => (
+              <a href={`${url('/ho-un-problema/')}?d=${id}#elenco`} class="dev-tile">
+                <Icon name={icone[id]} size={26} />
+                <strong>{nome}</strong>
+                <span>{conta(id)} {conta(id) === 1 ? 'soluzione' : 'soluzioni'}</span>
+              </a>
+            ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap" id="elenco">
+    <div class="regola">
+      <Icon name="reset" size={22} />
+      <p><strong>La regola d'oro:</strong> prima di tutto, riavvia. Sembra una battuta ma un riavvio completo sistema una quantità incredibile di problemi. Se non basta, allora si passa alle guide.</p>
+    </div>
+    <ArticleGrid
+      articoli={problemi}
+      filtro="dispositivo"
+      opzioni={DISPOSITIVI}
+      ricerca
+      placeholder="Descrivi il problema, es. batteria, wifi, non si accende..."
+      parametro="d"
+    />
+  </div>
+</Base>
+
+<style>
+  .hup-hero {
+    padding: 64px 0 40px;
+    background:
+      radial-gradient(circle at 85% 0%, rgba(255, 107, 157, 0.18), transparent 45%),
+      radial-gradient(circle at 10% 20%, rgba(124, 92, 255, 0.2), transparent 45%);
+  }
+
+  h1 {
+    font-size: clamp(2.2rem, 6vw, 3.6rem);
+    margin-bottom: 14px;
+  }
+
+  .hup-hero p {
+    color: var(--text-dim);
+    font-size: 1.12rem;
+    max-width: 720px;
+    margin: 0 0 32px;
+  }
+
+  .dev-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+
+  .dev-tile {
+    display: grid;
+    gap: 6px;
+    padding: 18px;
+    border-radius: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .dev-tile:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+
+  .dev-tile :global(svg) {
+    color: var(--accent-2);
+  }
+
+  .dev-tile span {
+    font-size: 0.82rem;
+    color: var(--text-faint);
+  }
+
+  .regola {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 16px 20px;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--accent-2) 10%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--accent-2) 35%, transparent);
+    margin-bottom: 28px;
+  }
+
+  .regola :global(svg) {
+    color: var(--accent-2);
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .regola p {
+    margin: 0;
+    color: var(--text-dim);
+  }
+</style>

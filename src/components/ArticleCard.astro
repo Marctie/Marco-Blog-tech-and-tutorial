@@ -1,0 +1,27 @@
+---
+import Icon from './Icon.astro';
+import { CATEGORIE, TIPI } from '../site.config';
+import { type Articolo, linkArticolo, copertina, dataBreve, minutiLettura } from '../lib/utils';
+
+interface Props {
+  articolo: Articolo;
+  mostraTipo?: boolean;
+}
+const { articolo: a, mostraTipo = true } = Astro.props;
+const cat = CATEGORIE[a.data.categoria];
+const etichetta = mostraTipo && a.data.tipo !== 'notizia' ? TIPI[a.data.tipo].nome : cat.nome;
+---
+<article class="card" style={`--cat:${cat.colore}`}>
+  <div class="card-cover">
+    <img src={copertina(a)} alt="" loading="lazy" width="1200" height="675" />
+  </div>
+  <div class="card-body">
+    <span class="badge">{etichetta}</span>
+    <h3 class="card-title"><a href={linkArticolo(a)}>{a.data.title}</a></h3>
+    <p class="card-desc">{a.data.description}</p>
+    <div class="meta">
+      <span><Icon name="calendar" size={14} /> {dataBreve(a.data.date)}</span>
+      <span><Icon name="clock" size={14} /> {a.data.tempo ?? `${minutiLettura(a.body)} min`}</span>
+    </div>
+  </div>
+</article>

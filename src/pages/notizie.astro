@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import ArticleGrid from '../components/ArticleGrid.astro';
+import { CATEGORIE } from '../site.config';
+import { getArticoli } from '../lib/utils';
+
+const notizie = (await getArticoli()).filter((a) => a.data.tipo === 'notizia');
+const opzioni = Object.fromEntries(Object.entries(CATEGORIE).map(([id, c]) => [id, c.nome]));
+---
+<Base title="Notizie" description="Le ultime notizie su smartphone, PC, console e videogiochi, raccontate in modo semplice.">
+  <div class="wrap">
+    <header class="page-hero">
+      <span class="eyebrow">Ultime notizie</span>
+      <h1>Cosa succede nel mondo tech</h1>
+      <p>Lanci, aggiornamenti, prezzi e date d'uscita. Solo le notizie che contano, spiegate senza tecnicismi inutili.</p>
+    </header>
+    <ArticleGrid articoli={notizie} filtro="categoria" opzioni={opzioni} parametro="c" />
+  </div>
+</Base>

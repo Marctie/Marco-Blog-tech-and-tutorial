@@ -1,0 +1,50 @@
+---
+import Icon from './Icon.astro';
+import { SITE, CATEGORIE } from '../site.config';
+import { url } from '../lib/utils';
+const anno = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <a href={url('/')} class="brand">
+          <img src={url('/logo.svg')} alt="" width="34" height="34" />
+          <span>Tasto<span class="gradient-text">Reset</span></span>
+        </a>
+        <p>{SITE.tagline}. Notizie, guide e soluzioni pratiche scritte da appassionati, per chi la tecnologia la usa tutti i giorni.</p>
+        <a href={url('/rss.xml')} class="section-link"><Icon name="rss" size={18} /> Feed RSS</a>
+      </div>
+      <div>
+        <h4>Sezioni</h4>
+        <ul>
+          <li><a href={url('/notizie/')}>Notizie</a></li>
+          <li><a href={url('/ho-un-problema/')}>Ho un problema</a></li>
+          <li><a href={url('/tutorial/')}>Tutorial</a></li>
+          <li><a href={url('/uscite/')}>Calendario uscite</a></li>
+          <li><a href={url('/canali-consigliati/')}>Canali consigliati</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Categorie</h4>
+        <ul>
+          {Object.entries(CATEGORIE).map(([id, c]) => <li><a href={url(`/articoli/categoria/${id}/`)}>{c.nome}</a></li>)}
+        </ul>
+      </div>
+      <div>
+        <h4>{SITE.name}</h4>
+        <ul>
+          <li><a href={url('/chi-siamo/')}>Chi siamo</a></li>
+          <li><a href={url('/progetti/')}>I nostri progetti</a></li>
+          <li><a href={url('/diventa-tester/')}>Diventa tester</a></li>
+          <li><a href={url('/privacy/')}>Privacy</a></li>
+          <li><a href={url('/cerca/')}>Cerca</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© {anno} {SITE.name}. Tutti i diritti riservati.</span>
+      <span>Marchi e nomi citati appartengono ai rispettivi proprietari.</span>
+    </div>
+  </div>
+</footer>

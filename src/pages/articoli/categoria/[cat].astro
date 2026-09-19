@@ -1,0 +1,41 @@
+---
+import Base from '../../../layouts/Base.astro';
+import ArticleGrid from '../../../components/ArticleGrid.astro';
+import { CATEGORIE, TIPI, type CategoriaId } from '../../../site.config';
+import { getArticoli, url } from '../../../lib/utils';
+
+export function getStaticPaths() {
+  return Object.keys(CATEGORIE).map((cat) => ({ params: { cat } }));
+}
+
+const cat = Astro.params.cat as CategoriaId;
+const info = CATEGORIE[cat];
+const articoli = (await getArticoli()).filter((a) => a.data.categoria === cat);
+const opzioni = Object.fromEntries(Object.entries(TIPI).map(([id, t]) => [id, t.plurale]));
+
+const descrizioni: Record<CategoriaId, string> = {
+  smartphone: 'iPhone, Android, pieghevoli e tablet: novità, confronti, consigli e soluzioni ai problemi più comuni.',
+  pc: 'Windows, componenti, portatili e periferiche. Guide pratiche per far andare meglio il computer.',
+  gaming: 'Uscite, anteprime, consigli e tutto quello che gira intorno ai videogiochi.',
+  console: 'PlayStation, Xbox, Nintendo Switch 2 e Steam Machine: notizie, guide e problemi risolti.',
+  app: 'App, servizi online, account e internet di casa. Trucchi e soluzioni per la vita digitale.',
+  sicurezza: 'Truffe, password, account rubati e privacy: come difendersi senza essere esperti.',
+  ai: "Assistenti, chatbot e funzioni 'intelligenti' sui dispositivi: cosa sono e come usarli davvero.",
+};
+---
+<Base title={info.nome} description={descrizioni[cat]}>
+  <div class="wrap" style={`--cat:${info.colore}`}>
+    <header class="page-hero">
+      <a href={url('/articoli/')} class="badge">Categoria</a>
+      <h1>{info.nome}</h1>
+      <p>{descrizioni[cat]}</p>
+    </header>
+    {
+      articoli.length ? (
+        <ArticleGrid articoli={articoli} filtro="tipo" opzioni={opzioni} parametro="tipo" />
+      ) : (
+        <p class="empty">Stiamo preparando i primi articoli di questa categoria. Torna a trovarci presto.</p>
+      )
+    }
+  </div>
+</Base>

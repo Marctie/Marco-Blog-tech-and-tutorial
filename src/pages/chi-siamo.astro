@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { SITE } from '../site.config';
+import { url } from '../lib/utils';
+---
+<Base title="Chi siamo" description={`${SITE.name} è un sito di tecnologia, videogiochi e soluzioni pratiche fatto da appassionati, per chi la tecnologia la usa tutti i giorni.`}>
+  <div class="wrap chi">
+    <header class="page-hero">
+      <span class="eyebrow">Chi siamo</span>
+      <h1>Hai provato a spegnere e riaccendere?</h1>
+      <p>È la prima cosa che ti chiede chiunque lavori nell'assistenza. E il bello è che spesso funziona davvero. Da qui nasce il nome {SITE.name}.</p>
+    </header>
+
+    <div class="prose">
+      <p>{SITE.name} è un piccolo progetto nato da un gruppo di appassionati di tecnologia e videogiochi. Tra di noi c'è chi ha passato anni dietro al bancone di un centro assistenza, chi fa il tester di software, chi smonta console per hobby e chi semplicemente è "quello a cui tutti chiedono aiuto" in famiglia e tra gli amici.</p>
+      <p>Ci siamo accorti che su internet le risposte ci sono, ma spesso sono sepolte sotto pubblicità, articoli infiniti o spiegazioni scritte per chi è già esperto. Noi vogliamo fare il contrario: <strong>andare dritti al punto, spiegare le cose con parole normali e dire la nostra quando serve</strong>, anche quando un prodotto non ci convince.</p>
+
+      <h2>Cosa trovi qui</h2>
+      <ul>
+        <li><strong>Notizie</strong>: le novità che contano davvero su smartphone, PC, console e giochi, con prezzi italiani e date precise.</li>
+        <li><strong>Ho un problema</strong>: soluzioni passo passo ai guai più comuni, dalla batteria che dura poco alla console che non si accende.</li>
+        <li><strong>Tutorial</strong>: guide pratiche con i percorsi esatti da seguire nelle impostazioni.</li>
+        <li><strong>Approfondimenti e guide all'acquisto</strong>: per capire cosa conviene comprare e cosa no.</li>
+        <li><strong>Calendario uscite</strong>: le date dei giochi e dei dispositivi in arrivo, tutte in un posto.</li>
+      </ul>
+
+      <h2>Come lavoriamo</h2>
+      <p>Le notizie le verifichiamo sulle fonti ufficiali e sulle testate più affidabili, e in fondo agli articoli trovi sempre i link da cui siamo partiti. Le guide le proviamo prima di pubblicarle. Se troviamo un errore lo correggiamo e aggiorniamo la data in cima all'articolo.</p>
+      <p>Non ci pagano per parlare bene di un prodotto. Se un giorno ci saranno collaborazioni o link sponsorizzati, lo scriveremo chiaramente.</p>
+
+      <h2>Il nostro laboratorio</h2>
+      <p>Oltre a scrivere, sviluppiamo anche qualche app. Sono strumenti semplici che usiamo per primi, senza pubblicità e con i dati che restano sul telefono. Alcune sono in fase di test e stiamo cercando persone che ci diano una mano a provarle: se hai un telefono Android, <a href={url('/diventa-tester/')}>dai un'occhiata qui</a>.</p>
+    </div>
+
+    <div class="azioni">
+      <a class="btn btn-primary" href={url('/progetti/')}>I nostri progetti <Icon name="arrow" size={18} /></a>
+      <a class="btn btn-ghost" href={url('/ho-un-problema/')}>Ho un problema</a>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .chi {
+    max-width: 820px;
+  }
+
+  .azioni {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 36px;
+  }
+</style>

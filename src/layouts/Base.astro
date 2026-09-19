@@ -1,0 +1,89 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../site.config';
+import { url } from '../lib/utils';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  published?: Date;
+  modified?: Date;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = SITE.description,
+  image = url('/og/default.jpg'),
+  type = 'website',
+  published,
+  modified,
+  jsonLd,
+  noindex = false,
+} = Astro.props;
+
+const fullTitle = title ? `${title} | ${SITE.name}` : `${SITE.name} — ${SITE.tagline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const imageUrl = new URL(image, Astro.site);
+---
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content={SITE.locale} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title ?? SITE.name} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    {published && <meta property="article:published_time" content={published.toISOString()} />}
+    {modified && <meta property="article:modified_time" content={modified.toISOString()} />}
+
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={url('/favicon.png')} type="image/png" sizes="48x48" />
+    <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
+    <link rel="manifest" href={url('/manifest.webmanifest')} />
+    <link rel="alternate" type="application/rss+xml" title={SITE.name} href={url('/rss.xml')} />
+    <link rel="sitemap" href={url('/sitemap-index.xml')} />
+    <meta name="theme-color" content="#0b0b12" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    />
+
+    <script is:inline>
+      try {
+        const t = localStorage.getItem('tema');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+  </head>
+  <body>
+    <a href="#contenuto" class="sr-only">Vai al contenuto</a>
+    <Header />
+    <main id="contenuto">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
