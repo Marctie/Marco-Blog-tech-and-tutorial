@@ -158,3 +158,32 @@ oppure impostare la variabile `SITE_URL` su Cloudflare.
 3. Facoltativo: un'**email di contatto generica** del sito (oggi la privacy rimanda all'email di invito al test o al modulo).
 4. Rivedere eventuali testi o progetti (stato di Dispensina/FinanzAI/Device Test Pro se nel frattempo è cambiato).
 5. Continuare a pubblicare articoli seguendo `docs/LINEA-EDITORIALE.md` e aggiornare `src/data/uscite.ts`.
+
+---
+
+## Sessione 2 — 26 settembre 2026
+
+### Articoli mancanti (20-26 settembre)
+
+Aggiunti 13 articoli (totale 64), tutti con fonti lette e verificate:
+
+- 20/09 PS5 firmware 26.06 (console, notizia)
+- 21/09 iPhone 18 Pro: vale la pena aggiornare? (smartphone, guida acquisto); One UI 9 su Galaxy S26 con date che cambiano (smartphone, notizia)
+- 22/09 Falsi rimborsi e phishing in Italia (sicurezza, approfondimento); Ho cliccato su un link truffa (sicurezza, problema)
+- 23/09 Tokyo Game Show 2026 (gaming, notizia); Telefono che scalda (smartphone, problema)
+- 24/09 Windows 11 KB5124010 anteprima (pc, notizia); Windows 11 personalizzare Start e barra (pc, tutorial)
+- 25/09 Game Pass fine settembre-ottobre (gaming, notizia); Meta Connect 2026 (ai, notizia)
+- 26/09 GPT-6 Sol e Luna + decreto 160/2026 (ai, approfondimento); Witcher 3 su Switch 2 (console, notizia)
+
+Nota: le fonti sulle date di Dragon's Dogma 2 Dark Arisen (6 o 9 ottobre) e Monster Hunter Wilds Switch 2 (4 o 6 dicembre) non coincidono: negli articoli non compaiono date, `uscite.ts` non è stato toccato. Da verificare.
+Build pulita: 88 pagine.
+
+### Routine di pubblicazione automatica
+
+Ispirata a quella di Informatix Repair (`../Sito Informatix.it`). Routine cloud con 2 esecuzioni al giorno: 9:00 e 18:00 Europe/Rome, un articolo per esecuzione, push diretto su `main`.
+
+- Istruzioni complete per l'agente: `docs/ROUTINE-PUBBLICAZIONE.md` (regole di anonimato, verifica delle fonti, rotazione delle categorie, 9:00 = notizia, 18:00 = contenuto utile nel tempo).
+- Registro delle esecuzioni: `docs/REGISTRO-ROUTINE.md`.
+- Cron in UTC: `0 7,16 * * *` (ora legale). **Il 25 ottobre 2026 passare a `0 8,17 * * *`** (ora solare).
+- Il commit dell'agente include le copertine generate.
+- Da controllare: esito delle prime esecuzioni e che gli articoli rispettino la linea editoriale.
