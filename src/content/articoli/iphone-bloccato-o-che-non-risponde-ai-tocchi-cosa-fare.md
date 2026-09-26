@@ -12,6 +12,8 @@ tempo: "10 minuti"
 fonti:
   - titolo: "AppleInsider - iOS 27 Notification Center issue persists from beta to public release"
     url: "https://appleinsider.com/articles/26/09/16/ios-27-notification-center-issue-persists-from-beta-to-public-release"
+  - titolo: "iSpazio - iPhone 18 Pro, bug Face ID e riavvio: in arrivo iOS 27.0.1"
+    url: "https://www.ispazio.net/2274041/iphone-18-pro-bug-face-id-riavvio-ios-27-0-1"
 video:
   - titolo: "Cerca 'iphone bloccato non risponde ai tocchi' su YouTube"
     url: "https://www.youtube.com/results?search_query=iphone+bloccato+non+risponde+ai+tocchi"
@@ -31,11 +33,13 @@ Su iPhone con tasto Home basta tenere premuti insieme **tasto laterale (o superi
 
 ## Un bug noto di iOS 27 che vale la pena conoscere
 
-Se il blocco capita spesso e sempre nello stesso modo, potresti aver trovato un difetto reale e già segnalato di iOS 27, uscito il 14 settembre 2026. Il problema si manifesta quando si apre il **Centro Notifiche** e, prima che l'animazione finisca, si apre subito dopo il **Centro di Controllo**: in quel caso il Centro Notifiche può smettere di rispondere ai tocchi.
+iOS 27 è uscito il 14 settembre 2026 e ha due difetti segnalati che possono dare l'impressione di un iPhone bloccato.
 
-> Apple non ha ancora distribuito una correzione ufficiale per questo difetto specifico: al momento l'unica soluzione è il riavvio forzato descritto sopra.
+**Centro Notifiche.** Se apri il Centro Notifiche e subito dopo il Centro di Controllo, il Centro Notifiche può smettere di aprirsi. AppleInsider precisa che il difetto c'era già nelle versioni di prova, che va provocato aprendo i due pannelli in rapida sequenza e che nei suoi test **non ha bloccato l'intero telefono**. Apple non lo ha ancora corretto: basta un riavvio forzato, come sopra.
 
-È un problema di interfaccia, non hardware: non c'entra la batteria né il touch screen difettoso, e non richiede assistenza. Basta evitare di aprire i due centri in rapida sequenza finché Apple non pubblica un aggiornamento correttivo. Se hai un iPhone 18 Pro o Pro Max e il blocco arriva **dopo un Face ID fallito**, è un difetto diverso: in quel caso conviene comunque installare gli aggiornamenti software non appena disponibili, perché Apple li sta già preparando.
+> Se il blocco dell'intero schermo ti capita spesso, difficilmente la causa è questo difetto.
+
+**Face ID su iPhone 18 Pro e Pro Max.** Alcuni utenti segnalano che, quando il riconoscimento del viso fallisce, il telefono smette di rispondere e dopo pochi secondi si riavvia da solo. Non riguarda tutti gli esemplari. È un problema di software: secondo iSpazio, Apple ha comunicato un aggiornamento iOS 27.0.1 previsto per l'inizio della settimana del 28 settembre.
 
 ## Altre cause comuni del blocco
 

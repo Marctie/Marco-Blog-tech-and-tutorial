@@ -9,11 +9,7 @@ copertina: "2FA"
 dispositivo: app
 difficolta: facile
 tempo: "10 minuti"
-fonti:
-  - titolo: "Banca d'Italia - La truffa SIM swap"
-    url: "https://economiapertutti.bancaditalia.it/notizie/la-truffa-sim-swap/"
-  - titolo: "Microsoft - Come aggiungere gli account a Microsoft Authenticator"
-    url: "https://support.microsoft.com/it-it/account-billing/come-aggiungere-gli-account-a-microsoft-authenticator-92544b53-7706-4581-a142-30344a2a2a57"
+fonti: []
 video:
   - titolo: "Cerca 'app authenticator come funziona' su YouTube"
     url: "https://www.youtube.com/results?search_query=app+authenticator+come+funziona+autenticazione+due+fattori"
@@ -26,7 +22,7 @@ Ricevi un SMS con un codice ogni volta che accedi a Google, Instagram o alla tua
 
 ## Perché lo SMS è il punto più debole
 
-Il codice via SMS resta meglio di niente, ma dipende dalla rete telefonica. Un truffatore che ha già raccolto i tuoi dati personali (con phishing, un documento falsificato o un finto smarrimento) può chiedere a un operatore un duplicato della tua SIM. Se ci riesce, per qualche ora riceve lui i tuoi SMS, compresi i codici di accesso a email, social e conto in banca. È un attacco mirato e più raro di un semplice phishing, ma quando succede è veloce: i truffatori agiscono nel giro di poche ore dall'attivazione del duplicato.
+Il codice via SMS resta meglio di niente, ma dipende dalla rete telefonica. Un truffatore che ha già raccolto i tuoi dati personali (con phishing, un documento falsificato o un finto smarrimento) può chiedere a un operatore un duplicato della tua SIM. Se ci riesce, per qualche ora riceve lui i tuoi SMS, compresi i codici di accesso a email, social e conto in banca. È un attacco mirato e più raro di un semplice phishing, ma quando succede il danno può essere serio: se il telefono perde improvvisamente il segnale senza motivo, contatta subito il tuo operatore.
 
 Un'app authenticator elimina il problema alla radice: il codice non viaggia sulla rete telefonica. Viene generato **direttamente sul telefono**, offline, e cambia ogni 30 secondi. Anche chi clona la tua SIM non vede nulla.
 

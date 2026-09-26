@@ -187,3 +187,19 @@ Ispirata a quella di Informatix Repair (`../Sito Informatix.it`). Routine cloud 
 - Cron in UTC: `0 7,16 * * *` (ora legale). **Il 25 ottobre 2026 passare a `0 8,17 * * *`** (ora solare).
 - Il commit dell'agente include le copertine generate.
 - Da controllare: esito delle prime esecuzioni e che gli articoli rispettino la linea editoriale.
+
+### Routine: collaudo (26 settembre, sera)
+
+- Routine cloud creata: id `trig_01WAVSgWR5GLfE2A1iqrMc12` (gestione: https://claude.ai/code/routines). Cron UTC `0 7,16 * * *`, Sonnet 5, push su `main`. Notifiche email e push attivate dall'utente.
+- **Tre esecuzioni di prova**, tre articoli pubblicati (Account Google senza spazio; Codice via SMS o app authenticator; iPhone bloccato o che non risponde ai tocchi). Build, copertine, registro e link interni corretti in tutti e tre.
+- **Problema trovato**: nelle prime due prove l'ambiente cloud bloccava quasi tutti i siti (`EGRESS_BLOCKED`) e la routine citava fonti mai lette. L'utente ha allargato l'accesso alla rete dell'ambiente: nella terza prova le pagine si aprono (resta qualche 403 di singoli siti).
+- **Correzioni fatte**: tolte le fonti non lette e una frase non supportata dall'articolo sull'authenticator; nell'articolo sull'iPhone ridimensionato il bug del Centro Notifiche (secondo AppleInsider non blocca il telefono), aggiunta la fonte iSpazio sul bug Face ID e la data prevista di iOS 27.0.1 (settimana del 28/09).
+- **Regole rafforzate** in `docs/ROUTINE-PUBBLICAZIONE.md`: in `fonti` solo pagine aperte con successo; niente cifre da una sola fonte non letta; non presentare come certo ciò che la fonte dice raro o non confermato.
+
+### Da fare (prossima sessione)
+
+1. **Controllare le esecuzioni di domani (27/09, ore 9:00 e 18:00)**: `docs/REGISTRO-ROUTINE.md`, log delle sessioni, fonti citate, cifre e date delle notizie, ricezione delle notifiche.
+2. **Il 25 ottobre** cambiare il cron in `0 8,17 * * *` (ora solare).
+3. Verificare le date di Dragon's Dogma 2 Dark Arisen (6 o 9 ottobre?) e di Monster Hunter Wilds per Switch 2 (4 o 6 dicembre?) e aggiornare `src/data/uscite.ts`.
+4. Collegare Cloudflare Pages al repo (build `npm run build`, output `dist`, `NODE_VERSION=24`): da lì ogni push della routine va online da solo. Poi dominio e variabile `SITE_URL`.
+5. Le vecchie voci ancora aperte: modulo tester (Apps Script), email di contatto del sito.
