@@ -10,8 +10,6 @@ dispositivo: app
 difficolta: facile
 tempo: "15 minuti"
 fonti:
-  - titolo: "Guida di Google One - Gestisci lo spazio di archiviazione su Drive, Gmail e Foto"
-    url: "https://support.google.com/googleone/answer/6374270?hl=it"
   - titolo: "Guida di Gmail - Come funziona lo spazio di archiviazione di Google"
     url: "https://support.google.com/mail/answer/9312312?hl=it"
 video:
