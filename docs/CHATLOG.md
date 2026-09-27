@@ -203,3 +203,62 @@ Ispirata a quella di Informatix Repair (`../Sito Informatix.it`). Routine cloud 
 3. Verificare le date di Dragon's Dogma 2 Dark Arisen (6 o 9 ottobre?) e di Monster Hunter Wilds per Switch 2 (4 o 6 dicembre?) e aggiornare `src/data/uscite.ts`.
 4. Collegare Cloudflare Pages al repo (build `npm run build`, output `dist`, `NODE_VERSION=24`): da lì ogni push della routine va online da solo. Poi dominio e variabile `SITE_URL`.
 5. Le vecchie voci ancora aperte: modulo tester (Apps Script), email di contatto del sito.
+
+---
+
+## Sessione 3 — 27 settembre 2026
+
+### Dominio in produzione
+
+Comprato `tastoreset.online` su Cloudflare Registrar. Aggiornato il site URL di riserva in `astro.config.mjs`
+(`https://www.tastoreset.online`). Collegato come dominio personalizzato sia senza `www` che con `www`, entrambi
+verificati online con HTTPS.
+
+**Scoperta importante:** il sito non era un progetto Cloudflare Pages ma un **Worker** (`tastoreset`, asset
+statici, URL di riserva `tastoreset.marcopeluso99.workers.dev`), creato in precedenza con un caricamento manuale,
+senza nessun collegamento Git. Per questo i push su GitHub non aggiornavano il sito live, e la dashboard dava
+errore cercando di leggere log di build che non esistevano.
+
+### Deploy automatico
+
+Non è stato possibile ritrovare/usare una sezione "Build" nella dashboard Cloudflare per collegare il Worker
+esistente al repo Git a posteriori. Soluzione adottata: **GitHub Action** (`.github/workflows/cloudflare-deploy.yml`)
+che ad ogni push su `main` fa build e `wrangler deploy`. Config del Worker in `wrangler.jsonc` (root del repo).
+Serve forzare `wranglerVersion: '4'` nell'action: la v3 di default non supporta Worker con soli asset statici
+(niente entry-point JS) e fallisce con "Missing entry-point".
+
+Secret GitHub impostati (repo `Marctie/Marco-Blog-tech-and-tutorial`): `CLOUDFLARE_API_TOKEN` (permessi
+"Edit Cloudflare Workers") e `CLOUDFLARE_ACCOUNT_ID`. Verificato con due deploy di prova: push → Action →
+sito live in 23-30 secondi. Questo copre anche i push della routine automatica delle 9:00/18:00, che quindi
+ora pubblica articoli **e** li mette online da sola, senza nessun intervento.
+
+Per deploy manuali d'emergenza: `npm run build` poi `npx wrangler deploy` dalla root del repo (richiede
+`wrangler login` fatto una volta, credenziali salvate in locale).
+
+### Modulo "Contatti" (nuovo)
+
+Creata la pagina `/contatti/` (nome, email, motivo, messaggio) sul modello del modulo tester: config in
+`CONTACT_FORM` (`src/site.config.ts`), istruzioni in `docs/MODULO-CONTATTI.md`, link aggiunto nel footer,
+sezione dedicata nella privacy. L'utente ha chiesto qualcosa di più semplice di Google Apps Script: usato
+**Formspree** invece (nessuno script da scrivere, solo creare form + confermare email).
+
+### Modulo "Diventa tester" attivato
+
+Era rimasto vuoto dalla sessione 1. Attivato riusando **lo stesso endpoint Formspree** dei contatti (l'utente
+aveva già creato un solo form Formspree e voleva riutilizzarlo per entrambi, invece di crearne uno dedicato).
+Entrambi i moduli inoltrano le risposte via email a **dev.marco.lino99@gmail.com**.
+
+Endpoint Formspree in uso: `https://formspree.io/f/mzezkjwg` (in entrambi `TESTER_FORM.endpoint` e
+`CONTACT_FORM.endpoint`).
+
+### Stato di fine sessione
+
+Tutto verificato funzionante: dominio, HTTPS, deploy automatico, modulo contatti, modulo tester. L'utente ha confermato.
+
+### Da fare (prossima sessione)
+
+1. **Controllare che la routine delle 9:00/18:00 pubblichi E vada online da sola** (prima esecuzione utile dopo questa sessione).
+2. **Il 25 ottobre** cambiare il cron della routine in `0 8,17 * * *` (ora solare).
+3. Verificare le date di Dragon's Dogma 2 Dark Arisen (6 o 9 ottobre?) e di Monster Hunter Wilds per Switch 2 (4 o 6 dicembre?) e aggiornare `src/data/uscite.ts`.
+4. Facoltativo: email di contatto generica citata in modo esplicito nella privacy (oggi rimanda comunque al modulo contatti, ok così).
+5. Se in futuro serve un secondo modulo Formspree separato (es. per non mischiare le email di tester e contatti), il piano gratuito permette più form sullo stesso account.
