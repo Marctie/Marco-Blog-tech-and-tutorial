@@ -43,6 +43,9 @@ const attivo = (p: string) => (path.startsWith(url(p)) ? 'page' : undefined);
         <Icon name="moon" class="i-moon" />
         <Icon name="sun" class="i-sun" />
       </button>
+      <button type="button" class="icon-btn lang-toggle" id="lang-toggle" aria-label="Traduci in inglese / Translate to English">
+        <span id="lang-toggle-label">EN</span>
+      </button>
       <button type="button" class="icon-btn menu-toggle" id="menu-toggle" aria-label="Apri menu" aria-expanded="false">
         <Icon name="menu" />
       </button>
@@ -68,4 +71,32 @@ const attivo = (p: string) => (path.startsWith(url(p)) ? 'page' : undefined);
       localStorage.setItem('tema', nuovo);
     } catch (e) {}
   });
+
+  // Traduzione automatica in inglese (Google Translate) tramite cookie googtrans.
+  (function () {
+    const btn = document.getElementById('lang-toggle');
+    const label = document.getElementById('lang-toggle-label');
+    if (!btn || !label) return;
+
+    const leggiCookie = (nome) => {
+      const match = document.cookie.match(new RegExp('(?:^|; )' + nome + '=([^;]*)'));
+      return match ? decodeURIComponent(match[1]) : null;
+    };
+
+    const inglese = leggiCookie('googtrans') === '/it/en';
+    label.textContent = inglese ? 'IT' : 'EN';
+    btn.setAttribute('aria-pressed', String(inglese));
+
+    btn.addEventListener('click', () => {
+      const host = location.hostname;
+      if (inglese) {
+        document.cookie = 'googtrans=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        document.cookie = `googtrans=;path=/;domain=${host};expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+      } else {
+        document.cookie = 'googtrans=/it/en;path=/';
+        document.cookie = `googtrans=/it/en;path=/;domain=${host}`;
+      }
+      location.reload();
+    });
+  })();
 </script>

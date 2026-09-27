@@ -276,6 +276,34 @@ h4 {
   display: none;
 }
 
+.lang-toggle {
+  width: auto;
+  padding: 0 10px;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Nasconde il widget e la barra di Google Translate, tenendo solo la traduzione. */
+#google_translate_element,
+.goog-te-banner-frame,
+.goog-te-gadget-icon,
+.skiptranslate iframe {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+}
+
+.goog-tooltip,
+.goog-tooltip:hover,
+.goog-text-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
 .theme-toggle .i-sun {
   display: none;
 }

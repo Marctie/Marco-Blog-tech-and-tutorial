@@ -85,5 +85,16 @@ const imageUrl = new URL(image, Astro.site);
       <slot />
     </main>
     <Footer />
+
+    <div id="google_translate_element" aria-hidden="true"></div>
+    <script is:inline>
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          { pageLanguage: 'it', includedLanguages: 'en', autoDisplay: false },
+          'google_translate_element'
+        );
+      }
+    </script>
+    <script is:inline src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
   </body>
 </html>
