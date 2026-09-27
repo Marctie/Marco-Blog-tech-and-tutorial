@@ -1,0 +1,235 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { CONTACT_FORM } from '../site.config';
+import { url } from '../lib/utils';
+
+const motivi = ['Segnalare un errore in un articolo', 'Proporre un argomento', 'Domanda sui progetti/app', 'Altro'];
+---
+<Base
+  title="Contatti"
+  description="Scrivici per segnalare un errore, proporre un argomento o farci una domanda."
+>
+  <div class="wrap contatti">
+    <header class="page-hero">
+      <span class="eyebrow">Scrivici</span>
+      <h1>Contatti</h1>
+      <p>Hai trovato un errore in un articolo, vuoi proporci un argomento o hai una domanda? Compila il modulo, ti rispondiamo appena possibile.</p>
+    </header>
+
+    <form class="c-form" id="form-contatti" data-provider={CONTACT_FORM.provider} data-endpoint={CONTACT_FORM.endpoint} novalidate>
+      <div class="campo">
+        <label for="nome">Nome *</label>
+        <input id="nome" name="nome" type="text" required maxlength="60" autocomplete="name" />
+      </div>
+
+      <div class="campo">
+        <label for="email">La tua email *</label>
+        <input id="email" name="email" type="email" required maxlength="120" autocomplete="email" inputmode="email" placeholder="nome@esempio.it" />
+        <small>Ci serve per poterti rispondere.</small>
+      </div>
+
+      <div class="campo">
+        <label for="motivo">Motivo *</label>
+        <select id="motivo" name="motivo" required>
+          <option value="">Seleziona</option>
+          {motivi.map((m) => <option>{m}</option>)}
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="messaggio">Messaggio *</label>
+        <textarea id="messaggio" name="messaggio" rows="5" required maxlength="2000"></textarea>
+      </div>
+
+      <div class="hp" aria-hidden="true">
+        <label for="sito">Lascia vuoto questo campo</label>
+        <input id="sito" name="sito" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <p class="errore" role="alert" hidden></p>
+
+      <button type="submit" class="btn btn-primary invia">Invia messaggio <Icon name="arrow" size={18} /></button>
+
+      <div class="ok" hidden>
+        <Icon name="check" size={32} />
+        <h3>Messaggio inviato, grazie!</h3>
+        <p>Ti risponderemo all'indirizzo email che ci hai lasciato appena possibile.</p>
+      </div>
+    </form>
+  </div>
+</Base>
+
+<script>
+  const form = document.getElementById('form-contatti') as HTMLFormElement | null;
+  if (form) {
+    const errore = form.querySelector<HTMLElement>('.errore')!;
+    const ok = form.querySelector<HTMLElement>('.ok')!;
+    const invia = form.querySelector<HTMLButtonElement>('.invia')!;
+
+    const mostraErrore = (msg: string) => {
+      errore.textContent = msg;
+      errore.hidden = false;
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errore.hidden = true;
+      const dati = new FormData(form);
+
+      if (dati.get('sito')) return; // bot
+      const nome = String(dati.get('nome') ?? '').trim();
+      const email = String(dati.get('email') ?? '').trim();
+      const motivo = String(dati.get('motivo') ?? '').trim();
+      const messaggio = String(dati.get('messaggio') ?? '').trim();
+
+      if (!nome) return mostraErrore('Scrivi il tuo nome.');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return mostraErrore("Controlla l'indirizzo email, sembra non essere valido.");
+      if (!motivo) return mostraErrore('Scegli il motivo del messaggio.');
+      if (!messaggio) return mostraErrore('Scrivi un messaggio.');
+
+      const endpoint = form.dataset.endpoint;
+      if (!endpoint) {
+        return mostraErrore('Il modulo è in manutenzione in questo momento. Riprova tra qualche ora, grazie della pazienza.');
+      }
+
+      const corpo = new URLSearchParams();
+      corpo.set('nome', nome);
+      corpo.set('email', email);
+      corpo.set('motivo', motivo);
+      corpo.set('messaggio', messaggio);
+      corpo.set('pagina', location.href);
+
+      invia.disabled = true;
+      invia.textContent = 'Invio in corso...';
+      try {
+        if (form.dataset.provider === 'formspree') {
+          const r = await fetch(endpoint, { method: 'POST', body: corpo, headers: { Accept: 'application/json' } });
+          if (!r.ok) throw new Error(String(r.status));
+        } else {
+          // Google Apps Script non restituisce intestazioni CORS: la risposta è opaca
+          await fetch(endpoint, { method: 'POST', mode: 'no-cors', body: corpo });
+        }
+        form.querySelectorAll('.campo, .invia').forEach((el) => ((el as HTMLElement).hidden = true));
+        ok.hidden = false;
+        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch {
+        mostraErrore("Qualcosa è andato storto durante l'invio. Controlla la connessione e riprova.");
+        invia.disabled = false;
+        invia.textContent = 'Invia messaggio';
+      }
+    });
+  }
+</script>
+
+<style>
+  .contatti {
+    max-width: 640px;
+  }
+
+  .c-form {
+    padding: 32px;
+    border-radius: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    display: grid;
+    gap: 18px;
+    margin-top: 8px;
+  }
+
+  .campo {
+    display: grid;
+    gap: 6px;
+  }
+
+  .campo label {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .campo small {
+    color: var(--text-faint);
+    font-size: 0.83rem;
+  }
+
+  input[type='text'],
+  input[type='email'],
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border-strong);
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 1rem;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: 0;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+
+  .hp {
+    position: absolute;
+    left: -9999px;
+  }
+
+  .errore {
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: color-mix(in srgb, #e5484d 14%, var(--surface));
+    border: 1px solid color-mix(in srgb, #e5484d 45%, transparent);
+  }
+
+  .invia {
+    justify-self: start;
+    font-size: 1.02rem;
+    padding: 14px 24px;
+  }
+
+  .invia:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+
+  .ok {
+    text-align: center;
+    padding: 24px 8px;
+  }
+
+  .ok :global(svg) {
+    margin: 0 auto 12px;
+    width: 64px;
+    height: 64px;
+    padding: 14px;
+    border-radius: 50%;
+    background: var(--gradient);
+    color: #fff;
+  }
+
+  .ok h3 {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+  }
+
+  .ok p {
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .c-form {
+      padding: 22px 18px;
+    }
+  }
+</style>

@@ -19,6 +19,13 @@ export const TESTER_FORM = {
   endpoint: '',
 };
 
+// Modulo "Contatti": invia una notifica email a ogni messaggio.
+// Istruzioni complete in docs/MODULO-CONTATTI.md
+export const CONTACT_FORM = {
+  provider: 'formspree' as 'google-apps-script' | 'formspree',
+  endpoint: 'https://formspree.io/f/mzezkjwg',
+};
+
 export const CATEGORIE = {
   smartphone: { nome: 'Smartphone e tablet', breve: 'Smartphone', colore: '#7c5cff', icona: 'phone' },
   pc: { nome: 'PC e Windows', breve: 'PC', colore: '#2f8cff', icona: 'monitor' },
