@@ -15,8 +15,8 @@ export const SITE = {
 //           'formspree' (servizio esterno, piano gratuito limitato)
 // endpoint: URL fornito dal servizio. Istruzioni complete in docs/MODULO-TESTER.md
 export const TESTER_FORM = {
-  provider: 'google-apps-script' as 'google-apps-script' | 'formspree',
-  endpoint: '',
+  provider: 'formspree' as 'google-apps-script' | 'formspree',
+  endpoint: 'https://formspree.io/f/mzezkjwg',
 };
 
 // Modulo "Contatti": invia una notifica email a ogni messaggio.
