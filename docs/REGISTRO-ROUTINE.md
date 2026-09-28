@@ -6,3 +6,4 @@ Una riga per esecuzione: data, ora, titolo, slug, categoria, tipo (o motivo del 
 - 2026-09-26 21:46 — "Codice via SMS o app authenticator: qual è più sicuro (e come cambiare)" — slug: codice-via-sms-o-app-authenticator-qual-e-piu-sicuro-e-come-cambiare — categoria: sicurezza — tipo: tutorial
 - 2026-09-26 22:15 — "iPhone bloccato o che non risponde ai tocchi: cosa fare" — slug: iphone-bloccato-o-che-non-risponde-ai-tocchi-cosa-fare — categoria: smartphone — tipo: problema
 - 2026-09-27 18:11 — "Windows 11: come liberare spazio su disco senza formattare" — slug: windows-11-come-liberare-spazio-su-disco-senza-formattare — categoria: pc — tipo: tutorial
+- 2026-09-28 09:17 — "Minecraft avrà una nuova dimensione dopo 14 anni: cos'è The Sift e dove si prova già" — slug: minecraft-the-sift-nuova-dimensione-minecraft-dungeons-2 — categoria: gaming — tipo: notizia
