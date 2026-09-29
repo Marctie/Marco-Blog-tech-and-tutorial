@@ -8,3 +8,4 @@ Una riga per esecuzione: data, ora, titolo, slug, categoria, tipo (o motivo del 
 - 2026-09-27 18:11 — "Windows 11: come liberare spazio su disco senza formattare" — slug: windows-11-come-liberare-spazio-su-disco-senza-formattare — categoria: pc — tipo: tutorial
 - 2026-09-28 09:17 — "Minecraft avrà una nuova dimensione dopo 14 anni: cos'è The Sift e dove si prova già" — slug: minecraft-the-sift-nuova-dimensione-minecraft-dungeons-2 — categoria: gaming — tipo: notizia
 - 2026-09-28 18:15 — "Gmail: come copiare i codici di verifica senza aprire l'email" — slug: gmail-come-copiare-i-codici-di-verifica-senza-aprire-l-email — categoria: app — tipo: tutorial
+- 2026-09-29 09:11 — "OpenAI blocca GPT-6.1 Astra: perché non uscirà come previsto" — slug: openai-blocca-gpt-6-1-astra-perche-non-uscira-come-previsto — categoria: ai — tipo: notizia
