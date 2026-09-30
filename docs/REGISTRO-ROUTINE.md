@@ -9,3 +9,4 @@ Una riga per esecuzione: data, ora, titolo, slug, categoria, tipo (o motivo del 
 - 2026-09-28 09:17 — "Minecraft avrà una nuova dimensione dopo 14 anni: cos'è The Sift e dove si prova già" — slug: minecraft-the-sift-nuova-dimensione-minecraft-dungeons-2 — categoria: gaming — tipo: notizia
 - 2026-09-28 18:15 — "Gmail: come copiare i codici di verifica senza aprire l'email" — slug: gmail-come-copiare-i-codici-di-verifica-senza-aprire-l-email — categoria: app — tipo: tutorial
 - 2026-09-29 18:12 — "Come capire se una foto è stata fatta con l'IA: segnali e strumenti" — slug: come-capire-se-una-foto-e-stata-fatta-con-l-ia-segnali-e-strumenti — categoria: ai — tipo: tutorial
+- 2026-09-30 09:12 — "Truffe con la voce clonata dall'IA su WhatsApp: come proteggerti" — slug: truffe-con-la-voce-clonata-dall-ia-su-whatsapp-come-proteggerti — categoria: sicurezza — tipo: approfondimento
