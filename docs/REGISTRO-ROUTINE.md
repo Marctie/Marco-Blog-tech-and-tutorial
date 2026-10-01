@@ -11,3 +11,4 @@ Una riga per esecuzione: data, ora, titolo, slug, categoria, tipo (o motivo del 
 - 2026-09-29 18:12 — "Come capire se una foto è stata fatta con l'IA: segnali e strumenti" — slug: come-capire-se-una-foto-e-stata-fatta-con-l-ia-segnali-e-strumenti — categoria: ai — tipo: tutorial
 - 2026-09-30 18:12 — "Xbox Series X|S: le 6 novità in arrivo entro fine anno (e come provarle subito)" — slug: xbox-series-x-s-novita-settembre-2026-insider — categoria: console — tipo: tutorial
 - 2026-10-01 09:11 — "iOS 26.7.1: Apple corregge una falla già sfruttata, aggiorna subito l'iPhone" — slug: ios-26-7-1-apple-corregge-una-falla-gia-sfruttata-aggiorna-subito-l-iphone — categoria: sicurezza — tipo: notizia
+- 2026-10-01 18:09 — "La fotocamera del telefono non mette a fuoco o fa foto sfocate: come risolvere" — slug: la-fotocamera-del-telefono-non-mette-a-fuoco-o-fa-foto-sfocate-come-risolvere — categoria: smartphone — tipo: problema
