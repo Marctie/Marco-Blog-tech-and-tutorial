@@ -12,3 +12,4 @@ Una riga per esecuzione: data, ora, titolo, slug, categoria, tipo (o motivo del 
 - 2026-09-30 18:12 — "Xbox Series X|S: le 6 novità in arrivo entro fine anno (e come provarle subito)" — slug: xbox-series-x-s-novita-settembre-2026-insider — categoria: console — tipo: tutorial
 - 2026-10-01 09:11 — "iOS 26.7.1: Apple corregge una falla già sfruttata, aggiorna subito l'iPhone" — slug: ios-26-7-1-apple-corregge-una-falla-gia-sfruttata-aggiorna-subito-l-iphone — categoria: sicurezza — tipo: notizia
 - 2026-10-01 18:09 — "La fotocamera del telefono non mette a fuoco o fa foto sfocate: come risolvere" — slug: la-fotocamera-del-telefono-non-mette-a-fuoco-o-fa-foto-sfocate-come-risolvere — categoria: smartphone — tipo: problema
+- 2026-10-02 09:10 — "Windows 11 26H2 è arrivato: le novità e come scaricarlo subito" — slug: windows-11-26h2-e-arrivato-le-novita-e-come-scaricarlo-subito — categoria: pc — tipo: notizia
