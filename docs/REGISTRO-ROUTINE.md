@@ -15,3 +15,4 @@ Una riga per esecuzione: data, ora, titolo, slug, categoria, tipo (o motivo del 
 - 2026-10-02 09:10 — "Windows 11 26H2 è arrivato: le novità e come scaricarlo subito" — slug: windows-11-26h2-e-arrivato-le-novita-e-come-scaricarlo-subito — categoria: pc — tipo: notizia
 - 2026-10-02 18:09 — "WhatsApp: cosa sono le chat con restrizioni e come funzionano" — slug: whatsapp-cosa-sono-le-chat-con-restrizioni-e-come-funzionano — categoria: app — tipo: tutorial
 - 2026-10-04 09:14 — "Pokémon Home si aggiorna il 7 ottobre: arrivano Rosso Fuoco e Verde Foglia, più spazio e un Celebi in regalo" — slug: pokemon-home-aggiornamento-7-ottobre-rossofuoco-verdefoglia — categoria: gaming — tipo: notizia
+- 2026-10-04 18:14 — "Truffe con la voce clonata dall'IA: come riconoscerle e difendersi" — slug: truffe-con-la-voce-clonata-dall-ia-come-riconoscerle-e-difendersi — categoria: ai — tipo: approfondimento
