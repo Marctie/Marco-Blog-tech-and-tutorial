@@ -41,6 +41,15 @@ Argomenti: solo tecnologia consumer (vedi linea editoriale). Niente politica, ni
 1. `npm run build` deve finire senza errori. Le copertine (`public/covers`, `public/og`) si generano da sole: **vanno committate** insieme all'articolo.
 2. Rileggi l'articolo: nessun nome personale, nessuna frase in prima persona singolare, nessun dato non supportato dalle fonti.
 3. Aggiungi una riga a `docs/REGISTRO-ROUTINE.md` con: data, ora, titolo, slug, categoria, tipo.
-4. Commit con messaggio `Articolo: <titolo>` e push su `main`.
+4. Commit con messaggio `Articolo: <titolo>` e push su `main` con `git push origin HEAD:main` (vedi la sezione "Ramo di lavoro" qui sotto).
 5. Se la build fallisce o non trovi un argomento affidabile, **non pubblicare nulla**: scrivi nel registro il motivo e termina.
 6. Un solo articolo per esecuzione.
+
+## Ramo di lavoro (obbligatorio)
+
+La sessione automatica può partire su un ramo `claude/...` invece che su `main`. Il sito si pubblica **solo da `main`**: un commit lasciato su un altro ramo non va online (è successo a 8 esecuzioni tra il 27 settembre e il 5 ottobre).
+
+1. **Prima di scrivere**: `git fetch origin main && git checkout -B main origin/main`, e lavora su `main`.
+2. **Per pubblicare**: `git push origin HEAD:main`. Se viene rifiutato: `git pull --rebase origin main`, di nuovo `npm run build`, e riprova.
+3. **Verifica finale**: `git fetch origin main`, poi `git rev-parse HEAD` deve essere uguale a `git rev-parse origin/main`. Se non coincidono l'articolo non è online: riprova il push e, se non riesci, segnalalo come ERRORE nel messaggio finale e nel registro.
+4. Non creare né pushare altri rami.
