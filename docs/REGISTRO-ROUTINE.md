@@ -24,3 +24,4 @@ Una riga per esecuzione: data, ora, titolo, slug, categoria, tipo (o motivo del 
 - 2026-10-05 18:12 — "Gemini gratis cambia dal 9 ottobre: cosa resta, cosa si perde e cosa conviene fare" — slug: gemini-gratis-cambia-dal-9-ottobre-cosa-resta-cosa-si-perde-e-cosa-conviene-fare — categoria: ai — tipo: approfondimento
 - 2026-10-05 18:25 — Recuperati 7 articoli rimasti su rami claude/* e mai arrivati su main (push non eseguito su main); scartato un doppione sulla voce clonata del 30/09.
 - 2026-10-06 09:13 — "L'upscaling IA del PS5 Pro arriva anche sulla PS5 normale: cos'è QSSR" — slug: l-upscaling-ia-del-ps5-pro-arriva-anche-sulla-ps5-normale-cos-e-qssr — categoria: console — tipo: notizia
+- 2026-10-06 18:09 — "Password manager: quale scegliere (e perché non salvare più le password nel browser)" — slug: password-manager-quale-scegliere — categoria: sicurezza — tipo: guida-acquisto
