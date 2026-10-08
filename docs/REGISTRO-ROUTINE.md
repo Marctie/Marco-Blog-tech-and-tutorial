@@ -27,3 +27,4 @@ Una riga per esecuzione: data, ora, titolo, slug, categoria, tipo (o motivo del 
 - 2026-10-06 18:09 — "Password manager: quale scegliere (e perché non salvare più le password nel browser)" — slug: password-manager-quale-scegliere — categoria: sicurezza — tipo: guida-acquisto
 - 2026-10-07 09:12 — "Pixel, l'aggiornamento di ottobre 2026 corregge tastiera e audio e chiude 25 falle di sicurezza" — slug: pixel-l-aggiornamento-di-ottobre-2026-corregge-tastiera-e-audio-e-chiude-25-fall — categoria: smartphone — tipo: notizia
 - 2026-10-08 09:13 — "Surface Laptop Ultra: Microsoft svela i prezzi (da 2.599 dollari) e la data di uscita" — slug: surface-laptop-ultra-microsoft-svela-i-prezzi-da-2-599-dollari-e-la-data-di-usci — categoria: pc — tipo: notizia
+- 2026-10-08 18:14 — "Le notifiche non arrivano su Android o iPhone: come risolvere" — slug: le-notifiche-non-arrivano-su-android-o-iphone-come-risolvere — categoria: app — tipo: problema
