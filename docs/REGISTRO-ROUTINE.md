@@ -30,3 +30,4 @@ Una riga per esecuzione: data, ora, titolo, slug, categoria, tipo (o motivo del 
 - 2026-10-08 18:14 — "Le notifiche non arrivano su Android o iPhone: come risolvere" — slug: le-notifiche-non-arrivano-su-android-o-iphone-come-risolvere — categoria: app — tipo: problema
 - 2026-10-09 09:17 — "Kingdom Hearts Collection arriva nativa su Switch 2, PS5 e Xbox Series X|S" — slug: kingdom-hearts-collection-arriva-nativa-su-switch-2-ps5-e-xbox-series-x-s — categoria: gaming — tipo: notizia
 - 2026-10-09 18:11 — "Come modificare le foto con l'IA di Google (Nano Banana): guida passo passo" — slug: come-modificare-le-foto-con-l-ia-di-google-nano-banana-guida-passo-passo — categoria: ai — tipo: tutorial
+- 2026-10-10 09:08 — "Sony vende decine di brevetti VR a Meta: cosa significa per PlayStation VR" — slug: sony-vende-decine-di-brevetti-vr-a-meta-cosa-significa-per-playstation-vr — categoria: console — tipo: notizia
