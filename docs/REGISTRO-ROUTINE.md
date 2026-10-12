@@ -35,3 +35,4 @@ Una riga per esecuzione: data, ora, titolo, slug, categoria, tipo (o motivo del 
 - 2026-10-11 07:13 — "Samsung aggiorna i Galaxy S26: arriva la patch di sicurezza di ottobre" — slug: samsung-aggiorna-i-galaxy-s26-arriva-la-patch-di-sicurezza-di-ottobre — categoria: smartphone — tipo: notizia
 - 2026-10-11 18:14 — "Come scegliere un PC portatile nel 2026: quanta RAM, SSD e processore servono davvero" — slug: come-scegliere-un-pc-portatile-nel-2026-quanta-ram-ssd-e-processore-servono-davv — categoria: pc — tipo: guida-acquisto
 - 2026-10-12 09:21 — "DroidDeck: l'app gratuita che trasforma lo smartphone Android in uno Steam Deck" — slug: droiddeck-l-app-gratuita-che-trasforma-lo-smartphone-android-in-uno-steam-deck — categoria: app — tipo: notizia
+- 2026-10-12 18:09 — "Cross-play: come giocare con amici su PS5, Xbox, Switch e PC" — slug: cross-play-come-giocare-con-amici-su-ps5-xbox-switch-e-pc — categoria: gaming — tipo: tutorial
