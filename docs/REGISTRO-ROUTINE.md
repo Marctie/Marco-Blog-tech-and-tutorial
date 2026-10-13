@@ -37,3 +37,4 @@ Una riga per esecuzione: data, ora, titolo, slug, categoria, tipo (o motivo del 
 - 2026-10-12 09:21 — "DroidDeck: l'app gratuita che trasforma lo smartphone Android in uno Steam Deck" — slug: droiddeck-l-app-gratuita-che-trasforma-lo-smartphone-android-in-uno-steam-deck — categoria: app — tipo: notizia
 - 2026-10-12 18:09 — "Cross-play: come giocare con amici su PS5, Xbox, Switch e PC" — slug: cross-play-come-giocare-con-amici-su-ps5-xbox-switch-e-pc — categoria: gaming — tipo: tutorial
 - 2026-10-13 09:17 — "Anthropic vieta di essere crudeli con Claude: cosa cambia dal 12 novembre" — slug: anthropic-vieta-di-essere-crudeli-con-claude-cosa-cambia-dal-12-novembre — categoria: ai — tipo: notizia
+- 2026-10-13 18:14 — "Quale microSD Express comprare per Nintendo Switch 2" — slug: quale-microsd-express-comprare-per-nintendo-switch-2 — categoria: console — tipo: guida-acquisto
